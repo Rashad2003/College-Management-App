@@ -20,4 +20,4 @@ const attendanceSchema = new mongoose.Schema({
   facultyId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 }, { timestamps: true });
 
-export default mongoose.model("Attendance", attendanceSchema);
+export default  mongoose.models.Attendance || mongoose.model("Attendance", attendanceSchema);

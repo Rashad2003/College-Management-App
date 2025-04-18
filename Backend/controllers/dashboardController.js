@@ -1,5 +1,5 @@
-import Student from "../models/StudentModel.js";
-import User from "../models/UserModel.js";
+import Student from "../models/studentModel.js";
+import User from "../models/userModel.js";
 
 export const getDashboardStats = async (req, res) => {
   try {
