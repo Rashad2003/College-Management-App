@@ -1,7 +1,7 @@
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
-import { StoreContext } from "./context/storeContext";
+import { StoreContext } from "./context/StoreContext";
 import { LogIn } from "./pages/LogIn";
 import { Dashboard } from "./pages/Dashboard";
 import { Register } from "./pages/Register";
