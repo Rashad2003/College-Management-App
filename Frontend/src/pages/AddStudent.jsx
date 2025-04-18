@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
-import { StoreContext } from "../context/storeContext";
+import { StoreContext } from "../context/StoreContext";
 import axios from "axios";
 
 export const AddStudent = () => {

@@ -5,7 +5,7 @@ import {
   FaUsers
 } from "react-icons/fa";
 import axios from "axios";
-import { StoreContext } from "../context/storeContext";
+import { StoreContext } from "../context/StoreContext";
 
 
 export const Dashboard = () => {

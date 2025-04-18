@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { NavLink } from "react-router-dom";
 import axios from "axios";
-import { StoreContext } from "../context/storeContext";
+import { StoreContext } from "../context/StoreContext";
 import { toast } from "react-toastify";
 
 export const LogIn = ({setToken}) => {

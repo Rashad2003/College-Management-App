@@ -2,7 +2,7 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
-import { StoreContext } from "../context/storeContext";
+import { StoreContext } from "../context/StoreContext";
 
 export const Register = () => {
   const { backendUrl } = useContext(StoreContext);

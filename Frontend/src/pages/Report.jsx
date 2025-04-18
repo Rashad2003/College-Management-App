@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { IoPrint } from "react-icons/io5";
 import axios from "axios";
-import { StoreContext } from "../context/storeContext";
+import { StoreContext } from "../context/StoreContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { toast } from "react-toastify";
