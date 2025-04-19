@@ -1,12 +1,12 @@
 import { useContext, useState } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { StoreContext } from "../context/StoreContext";
 import { toast } from "react-toastify";
 
 export const LogIn = ({setToken}) => {
   const { backendUrl } = useContext(StoreContext);
-
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -22,6 +22,7 @@ export const LogIn = ({setToken}) => {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         setToken(res.data.token);
+        navigate("/dashboard");
       } else {
         toast.success(res.data.message);
       }
