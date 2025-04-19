@@ -43,7 +43,7 @@ function App() {
         <Route path="/students" element={<ProtectedRoute element={<AddStudent />} role="Admin" />} />
         <Route path="/attendance" element={<ProtectedRoute element={<Attendance />} />} />
         <Route path="/report" element={<ProtectedRoute element={<Report />} />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<LogIn setToken={setToken}/>} />
       </Routes>
         </div>
       </div>
