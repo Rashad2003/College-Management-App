@@ -1,14 +1,13 @@
 import { PiStudent } from "react-icons/pi";
 import DateTime from './DateTime'
 import { MdLogout } from "react-icons/md";
-import { Navigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 
 const Header = () => {
     const logout = () =>{
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.reload();
-        <Navigate to="/login" />
+        useNavigate("/login");
     }
     const user = JSON.parse(localStorage.getItem("user"));
   return (
