@@ -62,7 +62,7 @@ export const LogIn = ({setToken}) => {
                 required
               />
               <span
-          className="absolute right-3 top-[38px] cursor-pointer text-gray-600"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 cursor-pointer"
           onClick={() => setShowPassword(!showPassword)}
         >
           {showPassword ? <FaEyeSlash /> : <FaEye />}
