@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { StoreContext } from "./context/StoreContext";
 import { LogIn } from "./pages/LogIn";
@@ -23,6 +23,21 @@ const ProtectedRoute = ({ element, role }) => {
   return element;
 };
 
+// Layout with sidebar + header
+const Layout = () => {
+  return (
+    <>
+      <Header />
+      <div className="grid grid-cols-[1fr_5fr]">
+        <Sidebar />
+        <div>
+          <Outlet />
+        </div>
+      </div>
+    </>
+  );
+};
+
 function App() {
   const { setToken } = useContext(StoreContext);
 
@@ -31,47 +46,38 @@ function App() {
       <ToastContainer />
 
       <Routes>
+        {/* Login Route (No header/sidebar) */}
         <Route path="/login" element={<LogIn setToken={setToken} />} />
-        <Route
-          path="*"
-          element={
-            <>
-              <Header />
-              <div className="grid grid-cols-[1fr_5fr]">
-                <Sidebar />
-                <div>
-                  <Routes>
-                    <Route
-                      path="/dashboard"
-                      element={<ProtectedRoute element={<Dashboard />} role="Admin" />}
-                    />
-                    <Route
-                      path="/register"
-                      element={<ProtectedRoute element={<Register />} role="Admin" />}
-                    />
-                    <Route
-                      path="/students"
-                      element={<ProtectedRoute element={<AddStudent />} role="Admin" />}
-                    />
-                    <Route
-                      path="/attendance"
-                      element={<ProtectedRoute element={<Attendance />} />}
-                    />
-                    <Route
-                      path="/report"
-                      element={<ProtectedRoute element={<Report />} />}
-                    />
-                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
-                  </Routes>
-                </div>
-              </div>
-            </>
-          }
-        />
+
+        {/* Protected Routes inside Layout */}
+        <Route element={<Layout />}>
+          <Route
+            path="/dashboard"
+            element={<ProtectedRoute element={<Dashboard />} role="Admin" />}
+          />
+          <Route
+            path="/register"
+            element={<ProtectedRoute element={<Register />} role="Admin" />}
+          />
+          <Route
+            path="/students"
+            element={<ProtectedRoute element={<AddStudent />} role="Admin" />}
+          />
+          <Route
+            path="/attendance"
+            element={<ProtectedRoute element={<Attendance />} />}
+          />
+          <Route
+            path="/report"
+            element={<ProtectedRoute element={<Report />} />}
+          />
+        </Route>
+
+        {/* Redirect unknown routes */}
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
 }
-
 
 export default App;
