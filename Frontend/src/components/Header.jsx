@@ -30,8 +30,8 @@ const Header = () => {
                         <p>Role:</p>
                     </div>
                     <div className="text-white">
-                        <p>{user.name}</p>
-                        <p>{user.role}</p>
+                        <p>{user?.name || Guest}</p>
+                        <p>{user?.role || Unknown}</p>
                     </div>
                 </div>
                 <div>
