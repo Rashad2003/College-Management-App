@@ -24,39 +24,54 @@ const ProtectedRoute = ({ element, role }) => {
 };
 
 function App() {
-  const { token, setToken } = useContext(StoreContext);
-  const user = JSON.parse(localStorage.getItem("user"));
-  const isLoggedIn = token && user;
+  const { setToken } = useContext(StoreContext);
 
   return (
     <Router>
       <ToastContainer />
-      {!isLoggedIn ? (
-        // ⛔ NO Header / Sidebar on login page
-        <Routes>
-          <Route path="/login" element={<LogIn setToken={setToken} />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
-      ) : (
-        // ✅ Logged in: show layout
-        <>
-          <Header />
-          <div className="grid grid-cols-[1fr_5fr]">
-            <Sidebar />
-            <div>
-              <Routes>
-                <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} role="Admin" />} />
-                <Route path="/register" element={<ProtectedRoute element={<Register />} role="Admin" />} />
-                <Route path="/students" element={<ProtectedRoute element={<AddStudent />} role="Admin" />} />
-                <Route path="/attendance" element={<ProtectedRoute element={<Attendance />} />} />
-                <Route path="/report" element={<ProtectedRoute element={<Report />} />} />
-              </Routes>
-            </div>
-          </div>
-        </>
-      )}
+
+      <Routes>
+        <Route path="/login" element={<LogIn setToken={setToken} />} />
+        <Route
+          path="*"
+          element={
+            <>
+              <Header />
+              <div className="grid grid-cols-[1fr_5fr]">
+                <Sidebar />
+                <div>
+                  <Routes>
+                    <Route
+                      path="/dashboard"
+                      element={<ProtectedRoute element={<Dashboard />} role="Admin" />}
+                    />
+                    <Route
+                      path="/register"
+                      element={<ProtectedRoute element={<Register />} role="Admin" />}
+                    />
+                    <Route
+                      path="/students"
+                      element={<ProtectedRoute element={<AddStudent />} role="Admin" />}
+                    />
+                    <Route
+                      path="/attendance"
+                      element={<ProtectedRoute element={<Attendance />} />}
+                    />
+                    <Route
+                      path="/report"
+                      element={<ProtectedRoute element={<Report />} />}
+                    />
+                    <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                  </Routes>
+                </div>
+              </div>
+            </>
+          }
+        />
+      </Routes>
     </Router>
   );
 }
+
 
 export default App;
