@@ -1,14 +1,17 @@
 import { useContext, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { StoreContext } from "../context/StoreContext";
 import { toast } from "react-toastify";
 
 export const LogIn = ({setToken}) => {
-  const { backendUrl } = useContext(StoreContext);
+
   const navigate = useNavigate();
+  const { backendUrl } = useContext(StoreContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -52,12 +55,18 @@ export const LogIn = ({setToken}) => {
             <div className="flex flex-col">
               <label className="mb-2 font-bold" htmlFor="password">Password:</label>
               <input
-                type="password"
+                type={showPassword ? "text" : "password"}
                 className="border"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 required
               />
+              <span
+          className="absolute right-3 top-[38px] cursor-pointer text-gray-600"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </span>
             </div>
             <button type="submit" className="w-full mt-4 bg-purple-900 text-white py-2 mt-5">
               Login
