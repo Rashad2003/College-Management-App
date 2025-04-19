@@ -4,10 +4,11 @@ import { MdLogout } from "react-icons/md";
 import {useNavigate } from "react-router-dom";
 
 const Header = () => {
+    const navigate = useNavigate();
     const logout = () =>{
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        useNavigate("/login");
+        navigate("/login");
     }
     const user = JSON.parse(localStorage.getItem("user"));
   return (
