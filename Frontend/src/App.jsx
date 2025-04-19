@@ -25,12 +25,20 @@ const ProtectedRoute = ({ element, role }) => {
 
 function App() {
   const { token, setToken } = useContext(StoreContext);
-  const isLoggedIn = token && localStorage.getItem("user");
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isLoggedIn = token && user;
 
   return (
     <Router>
       <ToastContainer />
-      {isLoggedIn ? (
+      {!isLoggedIn ? (
+        // ⛔ NO Header / Sidebar on login page
+        <Routes>
+          <Route path="/login" element={<LogIn setToken={setToken} />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      ) : (
+        // ✅ Logged in: show layout
         <>
           <Header />
           <div className="grid grid-cols-[1fr_5fr]">
@@ -47,11 +55,6 @@ function App() {
             </div>
           </div>
         </>
-      ) : (
-        <Routes>
-          <Route path="/login" element={<LogIn setToken={setToken} />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
-        </Routes>
       )}
     </Router>
   );
