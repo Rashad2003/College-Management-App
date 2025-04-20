@@ -131,6 +131,8 @@ export const requestPasswordReset = async (req, res) => {
         pass: process.env.SMTP_PASS,
       },
     });
+    console.log("SMTP_USER:", process.env.SMTP_USER);
+console.log("SMTP_PASS:", process.env.SMTP_PASS);
 
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${token}`;
     await transporter.sendMail({
