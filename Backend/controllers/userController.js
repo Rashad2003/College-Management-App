@@ -140,8 +140,8 @@ export const requestPasswordReset = async (req, res) => {
     });
 
     res.status(200).json({ success: true, message: "Reset link sent to email" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Server error" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
