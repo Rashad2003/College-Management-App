@@ -6,7 +6,6 @@ import { StoreContext } from "../context/StoreContext";
 import { toast } from "react-toastify";
 
 export const LogIn = ({setToken}) => {
-
   const navigate = useNavigate();
   const { backendUrl } = useContext(StoreContext);
   const [email, setEmail] = useState("");
