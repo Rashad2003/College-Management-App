@@ -16,7 +16,7 @@ export const LogIn = ({setToken}) => {
   const [forgotEmail, setForgotEmail] = useState("");
   const [retrievedPassword, setRetrievedPassword] = useState("");
 
-  const handleForgotPassword = async () => {
+  const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post(`${backendUrl}/api/user/forgot-password`, { email });
