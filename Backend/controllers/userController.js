@@ -110,10 +110,14 @@ export const loginUser = async (req, res) => {
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
-  if (!email) return res.status(400).json({ success: false, message: "Email required" });
+  try{
+    if (!email) return res.status(400).json({ success: false, message: "Email required" });
 
-  const user = await UserModel.findOne({ email });
-  if (!user) return res.status(404).json({ success: false, message: "User not found" });
-
-  return res.json({ success: true, password: user.password }); // only for testing, not in production
+    const user = await UserModel.findOne({ email });
+    if (!user) return res.status(404).json({ success: false, message: "User not found" });
+  
+    return res.json({ success: true, password: user.password });
+  } catch(error){
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
