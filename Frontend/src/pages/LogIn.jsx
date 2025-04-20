@@ -18,7 +18,7 @@ export const LogIn = ({setToken}) => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${backendUrl}/api/user/forgot-password`, { email: forgotEmail });
+      const res = await axios.post( backendUrl + "/api/user/forgot-password", { email: forgotEmail });
       if (res.data.success) {
         toast.success("Reset link sent to your email");
       } else {
