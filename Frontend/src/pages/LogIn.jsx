@@ -12,6 +12,26 @@ export const LogIn = ({setToken}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [showForgotPopup, setShowForgotPopup] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [retrievedPassword, setRetrievedPassword] = useState("");
+
+  const handleForgotPassword = async () => {
+    try {
+      const res = await axios.post(backendUrl + "/api/user/forgot-password", {
+        email: forgotEmail,
+      });
+
+      if (res.data.success) {
+        setRetrievedPassword(res.data.password);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (err) {
+      toast.error("Something went wrong");
+    }
+  };
+
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -62,7 +82,7 @@ export const LogIn = ({setToken}) => {
                 required
               />
               <span
-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 cursor-pointer"
+          className="relative left-[13.5rem] bottom-[1.1rem] md:left-[25.5rem] md:bottom-[1.5rem] text-gray-600 cursor-pointer"
           onClick={() => setShowPassword(!showPassword)}
         >
           {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -72,13 +92,50 @@ export const LogIn = ({setToken}) => {
               Login
             </button>
             <div className="text-center mt-4">
-              <a href="#" className="forgot-password">
+              <p className="text-sm text-purple-700 hover:underline" onClick={() => {
+            setShowForgotPopup(true);
+            setRetrievedPassword("");
+            setForgotEmail("");
+          }}>
                 Forgot Password?
-              </a>
-            </div>
+              </p>
+            </div>            
           </form>
         </div>
       </div>
+      {showForgotPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
+            <h3 className="text-lg font-bold mb-4 text-purple-700">Forgot Password</h3>
+            <label className="block mb-2 text-sm">Enter your email:</label>
+            <input
+              type="email"
+              value={forgotEmail}
+              onChange={(e) => setForgotEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded mb-4"
+            />
+            <div className="flex justify-between">
+              <button
+                className="bg-purple-700 text-white px-4 py-2 rounded"
+                onClick={handleForgotPassword}
+              >
+                Submit
+              </button>
+              <button
+                className="text-sm text-gray-600 hover:underline"
+                onClick={() => setShowForgotPopup(false)}
+              >
+                Cancel
+              </button>
+            </div>
+            {retrievedPassword && (
+              <p className="mt-4 text-green-600 font-semibold">
+                Password: {retrievedPassword}
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 };
