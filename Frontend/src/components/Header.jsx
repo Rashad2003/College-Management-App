@@ -1,12 +1,15 @@
 import { PiStudent } from "react-icons/pi";
 import DateTime from './DateTime'
 import { MdLogout } from "react-icons/md";
+import {useNavigate } from "react-router-dom";
 
 const Header = () => {
+
+    const navigate = useNavigate();
     const logout = () =>{
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        window.location.reload();
+        navigate("/login");
     }
     const user = JSON.parse(localStorage.getItem("user"));
   return (
@@ -28,8 +31,8 @@ const Header = () => {
                         <p>Role:</p>
                     </div>
                     <div className="text-white">
-                        <p>{user.name}</p>
-                        <p>{user.role}</p>
+                        <p>{user?.name || "Guest"}</p>
+                        <p>{user?.role || "Unknown"}</p>
                     </div>
                 </div>
                 <div>

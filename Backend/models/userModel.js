@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema({
   password: String,
   gender: { type: String, enum: ["Male", "Female", "Other"] },
   role: { type: String, enum: ["Admin", "Faculty"] },
+  resetToken: String,
+  resetTokenExpiry: Date,
 });
 
 export default mongoose.models.User || mongoose.model("User", userSchema);
