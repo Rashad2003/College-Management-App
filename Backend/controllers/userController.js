@@ -110,20 +110,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  try{
-    if (!email) return res.status(400).json({ success: false, message: "Email required" });
-
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-  
-    return res.json({ success: true, password: user.password });
-  } catch(error){
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
 export const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
   try {
