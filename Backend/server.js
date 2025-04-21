@@ -9,7 +9,9 @@ import dashboardRoutes from "./routes/dashboardRoute.js";
 import {connectDB} from "./config/db.js";
 
 const app = express();
-app.use(cors());
+app.use(cors({
+origin: 'https://student-attendance-management-frontend.onrender.com',
+}));
 app.use(express.json());
 
 app.use("/api/user", userRoutes);
