@@ -19,7 +19,7 @@ export const LogIn = ({setToken}) => {
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${backendUrl}/api/user/forgot-password`, { email });
+      const res = await axios.post( backendUrl + "/api/user/forgot-password", { email: forgotEmail });
       if (res.data.success) {
         toast.success("Reset link sent to your email");
       } else {
@@ -57,7 +57,7 @@ export const LogIn = ({setToken}) => {
     <>
       <div className="flex items-center justify-center h-screen bg-gray-100 text-sm md:text-lg">
         <div className="border p-8 bg-white md:w-[500px] md:h-[400px] rounded-[2rem] shadow-md">
-          <h1 className="text-center font-bold text-base md:text-2xl mb-4 text-purple-900">Attendace Management System</h1>
+          <h1 className="text-center font-bold text-base md:text-2xl mb-4 text-purple-900">Attendance Management System</h1>
           <h1 className="text-center font-bold text-base md:text-2xl">Login</h1>
           <form onSubmit={onSubmitHandler}>
             <div className="flex flex-col mb-4">
@@ -117,7 +117,7 @@ export const LogIn = ({setToken}) => {
                 className="bg-purple-700 text-white px-4 py-2 rounded"
                 onClick={handleForgotPassword}
               >
-                Submit
+                Send Link
               </button>
               <button
                 className="text-sm text-gray-600 hover:underline"
