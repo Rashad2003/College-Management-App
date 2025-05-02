@@ -1,4 +1,3 @@
-import { PiStudent } from "react-icons/pi";
 import DateTime from './DateTime'
 import { MdLogout } from "react-icons/md";
 import {useNavigate } from "react-router-dom";
