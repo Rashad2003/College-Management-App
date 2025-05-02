@@ -7,14 +7,18 @@ const periodSchema = new mongoose.Schema({
 
 const studentAttendanceSchema = new mongoose.Schema({
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "Student" },
-  register: String,
-  name: String,
-  class: String,
+  register: { type: String },
+  name: { type: String },
+  department: { type: String },
+  year: { type: String },
+  section: { type: String },
   periods: [periodSchema],
 });
 
 const attendanceSchema = new mongoose.Schema({
-  class: { type: String, required: true },
+  department: { type: String, required: true },
+  year: { type: String, required: true },
+  section: { type: String, required: true },
   date: { type: Date, required: true },
   students: [studentAttendanceSchema],
   facultyId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

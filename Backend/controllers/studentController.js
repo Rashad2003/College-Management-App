@@ -1,6 +1,6 @@
 import Student from "../models/studentModel.js";
 export const addStudent = async (req, res) => {
-  const { name, class: className, register, email, phone, gender } = req.body;
+  const { name, department, year, section, register, email, phone, gender } = req.body;
 
   try {
     const existing = await Student.findOne({ register, email });
@@ -8,7 +8,7 @@ export const addStudent = async (req, res) => {
       return res.status(400).json({ success: false, message: "Student with this register number already exists" });
     }
 
-    const newStudent = new Student({ name, class: className, register, email, phone, gender });
+    const newStudent = new Student({ name, department, year, section, register, email, phone, gender });
     await newStudent.save();
     res.status(201).json({ success: true, message: "Student added", student: newStudent });
   } catch (err) {
@@ -28,12 +28,12 @@ export const listStudents = async (req, res) => {
 
 export const updateStudent = async (req, res) => {
   const { id } = req.params;
-  const { name, class: className, register, email, phone, gender } = req.body;
+  const { name, department, year, section, register, email, phone, gender } = req.body;
 
   try {
     const updatedStudent = await Student.findByIdAndUpdate(
       id,
-      { name, class: className, register, email, phone, gender },
+      { name, department, year, section, register, email, phone, gender },
       { new: true }
     );
 

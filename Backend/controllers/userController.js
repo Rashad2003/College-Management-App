@@ -110,20 +110,6 @@ export const loginUser = async (req, res) => {
   }
 };
 
-export const forgotPassword = async (req, res) => {
-  const { email } = req.body;
-  try{
-    if (!email) return res.status(400).json({ success: false, message: "Email required" });
-
-    const user = await User.findOne({ email });
-    if (!user) return res.status(404).json({ success: false, message: "User not found" });
-  
-    return res.json({ success: true, password: user.password });
-  } catch(error){
-    res.status(500).json({ success: false, message: error.message });
-  }
-};
-
 export const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
   try {
@@ -139,7 +125,7 @@ export const requestPasswordReset = async (req, res) => {
 
     // Use your own SMTP credentials
     const transporter = nodemailer.createTransport({
-      service: "Gmail",
+      service: "gmail",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -154,13 +140,14 @@ export const requestPasswordReset = async (req, res) => {
     });
 
     res.status(200).json({ success: true, message: "Reset link sent to email" });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Server error" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
 export const resetPassword = async (req, res) => {
-  const { token, newPassword } = req.body;
+  const { token } = req.params;
+  const { newPassword } = req.body;
   try {
     const user = await User.findOne({
       resetToken: token,

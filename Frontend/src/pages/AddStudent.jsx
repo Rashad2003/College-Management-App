@@ -8,7 +8,9 @@ export const AddStudent = () => {
   const { backendUrl } = useContext(StoreContext);
   const [formData, setFormData] = useState({
     name: "",
-    class: "",
+    department: "",
+    year: "",
+    section: "",
     register: "",
     email:"",
     phone:"",
@@ -27,7 +29,9 @@ export const AddStudent = () => {
 
   const initialState = {
     name: "",
-    class: "",
+    department: "",
+    year: "",
+    section: "",
     register: "",
     email:"",
     phone:"",
@@ -81,10 +85,12 @@ export const AddStudent = () => {
         toast.success("User added successfully!");
         setFormData({
           name: "",
-          class: "Class A",
+          department: "",
+          year: "",
+          section: "",
           register: "",
           email:"",
-    phone:"",
+          phone:"",
           gender: "Male",
         });
       } else {
@@ -113,7 +119,7 @@ export const AddStudent = () => {
   const filteredUsers = userList.filter(
     (students) =>
       students.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      students.class.toLowerCase().includes(searchTerm.toLowerCase())
+      students.register.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -169,20 +175,44 @@ export const AddStudent = () => {
                     className="outline-none border-b mb-6"
                   />
                   <label htmlFor="Class" className="font-bold">
-                    Select Class:
+                    Select Department:
                   </label>
                   <select
-                    name="class"
-                    id="class"
-                    value={formData.class}
+                    name="department"
+                    id="department"
+                    value={formData.department}
                     onChange={handleChange}
-                    className="mb-6 border"
+                    className="outline-none mb-6 border"
                   >
-                    <option>--Select--</option>
-                    <option value="class A">Class A</option>
-                    <option value="class B">Class B</option>
-                    <option value="class C">Class C</option>
+                    <option value="">--Select--</option>
+                    <option value="BTECH">BTECH</option>
+                    <option value="Other">Other</option>
                   </select>
+                  <label className="font-bold">Year:</label>
+<select
+  id="year"
+  value={formData.year}
+  onChange={handleChange}
+  className="outline-none mb-4 border"
+>
+  <option value="">--Select Year--</option>
+  <option value="1st">1st</option>
+  <option value="2nd">2nd</option>
+  <option value="3rd">3rd</option>
+  <option value="4th">4th</option>
+</select>
+<label className="font-bold">Section:</label>
+<select
+  id="section"
+  value={formData.section}
+  onChange={handleChange}
+  className="outline-none mb-4 border"
+>
+  <option value="">--Select Section--</option>
+  <option value="A">A</option>
+  <option value="B">B</option>
+  <option value="C">C</option>
+</select>
                    <label htmlFor="phone" className="font-bold">
                     Phone No.
                   </label>
@@ -264,7 +294,9 @@ export const AddStudent = () => {
                 <thead>
                   <tr className="border">
                     <th className="border">Name</th>
-                    <th className="border">Class</th>
+                    <th className="border">Department</th>
+                    <th className="border">Year</th>
+                    <th className="border">Section</th>
                     <th className="border">Register No.</th>
                     <th className="border">Email</th>
                     <th className="border">Phone</th>
@@ -275,8 +307,10 @@ export const AddStudent = () => {
                   {filteredUsers.map((user, index) => (
                     <tr key={index} className="border text-center">
                       <td className="border">{highlightMatch(user.name)}</td>
-                      <td className="border">{highlightMatch(user.class)}</td>
-                      <td className="border">{user.register}</td>
+                      <td className="border">{user.department}</td>
+                      <td className="border">{user.year}</td>
+                      <td className="border">{user.section}</td>
+                      <td className="border">{highlightMatch(user.register)}</td>
                       <td className="border">{user.email}</td>
                       <td className="border">{user.phone}</td>
                       <td className="border">{user.gender}</td>
@@ -314,7 +348,7 @@ export const AddStudent = () => {
                     <tr className="bg-gray-100">
                       <th className="border p-2">Select</th>
                       <th className="border p-2">Name</th>
-                      <th className="border p-2">Class</th>
+                      <th className="border p-2">Department</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -335,11 +369,12 @@ export const AddStudent = () => {
                                 setSelectedUserId(user._id);
                                 setFormData({
                                   name: selected.name,
-                                  class: selected.class,
+                                  department: selected.department,
+                                  year: selected.year,
+                                  section: selected.section,
                                   register: selected.register,
                                   email: selected.email,
                                   phone: selected.phone,
-
                                   gender: selected.gender,
                                 });
                               }
@@ -350,7 +385,7 @@ export const AddStudent = () => {
                           {highlightMatch(user.name)}
                         </td>
                         <td className="border p-2">
-                          {highlightMatch(user.class)}
+                          {highlightMatch(user.register)}
                         </td>
                       </tr>
                     ))}
@@ -370,20 +405,45 @@ export const AddStudent = () => {
                         onChange={handleChange}
                         className="outline-none border-b mb-4"
                       />
-                      <label htmlFor="Class" className="font-bold">
-                        Select Class:
-                      </label>
-                      <select
-                        name="class"
-                        id="class"
-                        value={formData.class}
-                        onChange={handleChange}
-                        className="mb-6 border"
-                      >
-                        <option value="class A">Class A</option>
-                        <option value="class B">Class B</option>
-                        <option value="class C">Class C</option>
-                      </select>
+                        <label htmlFor="Class" className="font-bold">
+                    Select Department:
+                  </label>
+                  <select
+                    name="department"
+                    id="department"
+                    value={formData.department}
+                    onChange={handleChange}
+                    className="outline-none mb-6 border"
+                  >
+                    <option value="">--Select--</option>
+                    <option value="BTECH">BTECH</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <label className="font-bold">Year:</label>
+<select
+  id="year"
+  value={formData.year}
+  onChange={handleChange}
+  className="outline-none mb-4 border"
+>
+  <option value="">--Select Year--</option>
+  <option value="1st">1st</option>
+  <option value="2nd">2nd</option>
+  <option value="3rd">3rd</option>
+  <option value="4th">4th</option>
+</select>
+<label className="font-bold">Section:</label>
+<select
+  id="section"
+  value={formData.section}
+  onChange={handleChange}
+  className="outline-none mb-4 border"
+>
+  <option value="">--Select Section--</option>
+  <option value="A">A</option>
+  <option value="B">B</option>
+  <option value="C">C</option>
+</select>
                        <label htmlFor="phone" className="font-bold">
                     Phone No.
                   </label>

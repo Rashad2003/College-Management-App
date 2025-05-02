@@ -3,10 +3,10 @@ import Student from "../models/studentModel.js";
 import { sendSMS } from "../smsSender.js"; 
 
 export const markAttendance = async (req, res) => {
-  const { class: className, date, students } = req.body;
+  const { department, year, section, date, students } = req.body;
 
   try {
-    const existing = await Attendance.findOne({ class: className, date });
+    const existing = await Attendance.findOne({ department, year, section, date });
 
     if (existing) {
       existing.students = students;
@@ -14,19 +14,22 @@ export const markAttendance = async (req, res) => {
       return res.json({ success: true, message: "Attendance updated" });
     }
 
-    const newAttendance = new Attendance({ class: className, date, students, facultyId: req.user?.id || null, });
+    const newAttendance = new Attendance({ department, year, section, date, students, facultyId: req.user?.id || null });
     await newAttendance.save();
     res.status(201).json({ success: true, message: "Attendance recorded" });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Error marking attendance" });
+    console.error("Mark Attendance Error:", err);
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
 export const viewAttendance = async (req, res) => {
-  const { class: className, date } = req.query;
+  const { department, year, section, date } = req.query;
   try {
     const records = await Attendance.find({
-      class: className,
+      department, 
+      year, 
+      section,
       date: { $gte: new Date(date), $lt: new Date(date).setHours(23,59,59,999) },
     }).populate("students.studentId", "name register gender");
 
@@ -67,16 +70,16 @@ export const sendMessageToParent = async (req, res) => {
 
 
 export const getClassReport = async (req, res) => {
-  const { fromDate, toDate, class: className } = req.query;
+  const { fromDate, toDate, department, year, section, } = req.query;
 
   try {
-    if (!fromDate || !toDate || !className) {
+    if (!fromDate || !toDate || !department || !year || !section) {
       return res.status(400).json({ success: false, message: "Missing required fields" });
     }
 
     // Find all students in that class (case-insensitive)
     const students = await Student.find({
-      class: { $regex: new RegExp(className, "i") },
+      department: { $regex: new RegExp(department, "i") },
     });
 
     if (!students.length) {
@@ -85,7 +88,7 @@ export const getClassReport = async (req, res) => {
 
     // Fetch attendance records for the class and date range
     const attendanceRecords = await Attendance.find({
-      class: { $regex: new RegExp(className, "i") },
+      department: { $regex: new RegExp(department, "i") },
       date: {
         $gte: new Date(fromDate),
         $lte: new Date(toDate),
@@ -114,7 +117,9 @@ export const getClassReport = async (req, res) => {
         _id: student._id,
         name: student.name,
         register: student.register,
-        class: student.class,
+        department: student.department, 
+        year: student.year, 
+        section: student.section,
         totalPeriods,
         presentCount,
         percentage,
@@ -124,7 +129,7 @@ export const getClassReport = async (req, res) => {
     res.status(200).json({ success: true, data: studentStats });
   } catch (error) {
     console.error("Report Error:", error);
-    res.status(500).json({ success: false, message: "Server error generating report" });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -164,7 +169,9 @@ export const getStudentReport = async (req, res) => {
         _id: student._id,
         name: student.name,
         register: student.register,
-        class: student.class,
+        department: student.department, 
+        year: student.year, 
+        section: student.section,
         totalPeriods,
         presentCount,
         absentCount: totalPeriods - presentCount,
@@ -179,8 +186,8 @@ export const getStudentReport = async (req, res) => {
 
 
 export const fetchAttendance = async (req, res) => {
-  const { class: cls, subject, date } = req.query;
-  const record = await Attendance.findOne({ class: cls, subject, date });
+  const { department, year, section, date } = req.query;
+  const record = await Attendance.findOne({ department, year, section, date });
 
   if (!record) {
     return res.json({ exists: false });

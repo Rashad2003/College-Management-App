@@ -7,7 +7,9 @@ export const Attendance = () => {
   const { backendUrl } = useContext(StoreContext);
   const [students, setStudents] = useState([]);
   const [formData, setFormData] = useState({
-    class: "",
+    department: "",
+    year: "",
+    section: "",
     date: "",
   });
 
@@ -15,25 +17,26 @@ export const Attendance = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [message, setMessage] = useState("");
-
-  const classOptions = ["Class A", "Class B", "Class C"];
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    if (formData.class && formData.date) {
+    if (formData.department && formData.year && formData.section && formData.date) {
       fetchAttendanceData();
     }
-  }, [formData.class, formData.date]);
+  }, [formData.department, formData.year, formData.section, formData.date]);
 
   const fetchAttendanceData = async () => {
     try {
       const res = await axios.get(`${backendUrl}/api/attendance/fetch`, {
         params: {
-          class: formData.class,
+          department: formData.department,
+          year: formData.year,
+          section: formData.section,
           date: formData.date,
         },
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(res)
 
       if (res.data.exists) {
         const saved = {};
@@ -47,7 +50,7 @@ export const Attendance = () => {
           register: s.register,
         })));
       } else {
-        fetchStudents(formData.class);
+        fetchStudents();
       }
     } catch (err) {
       console.error(err);
@@ -60,8 +63,12 @@ export const Attendance = () => {
       const res = await axios.get(`${backendUrl}/api/student/list`, {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(res.data.students);
       const filtered = res.data.students.filter(
-        (s) => s.class.toLowerCase() === cls.toLowerCase()
+        (s) =>
+          s.department.toLowerCase() === formData.department.toLowerCase() &&
+          s.year.toLowerCase() === formData.year.toLowerCase() &&
+          s.section.toLowerCase() === formData.section.toLowerCase()
       );
 
       setStudents(filtered);
@@ -86,18 +93,33 @@ export const Attendance = () => {
   };
 
   const handleSubmit = async () => {
+
     const payload = {
-      class: formData.class,
-      subject: formData.subject,
+      department: formData.department,
+      year: formData.year,
+      section: formData.section,
       date: formData.date,
-      students: Object.entries(attendance).map(([id, periods]) => ({
-        studentId: id,
-        periods: periods.map((status, i) => ({
-          periodNumber: i + 1,
-          status,
-        })),
-      })),
+      // students: Object.entries(attendance).map(([id, periods]) => ({
+      //   studentId: id,
+      //   periods: periods.map((status, i) => ({
+      //     periodNumber: i + 1,
+      //     status,
+      //   })),
+      // })),
+      students: Object.entries(attendance).map(([id, periods]) => {
+        const student = students.find((s) => s._id === id);
+        return {
+          studentId: id,
+          name: student?.name || "",
+          register: student?.register || "",
+          periods: periods.map((status, i) => ({
+            periodNumber: i + 1,
+            status,
+          })),
+        };
+      }),
     };
+    console.log("Submitting attendance payload:", payload);
 
     try {
       const res = await axios.post(`${backendUrl}/api/attendance/mark`, payload, {
@@ -170,23 +192,50 @@ export const Attendance = () => {
 
       <div className="flex gap-6 mb-6 flex-wrap">
         <div>
-          <label className="block mb-1 font-semibold">Class</label>
+          <label className="block mb-1 font-semibold">Department</label>
           <select
-            value={formData.class}
+            value={formData.department}
             onChange={(e) =>
-              setFormData({ ...formData, class: e.target.value })
+              setFormData({ ...formData, department: e.target.value })
             }
             className="border px-4 py-2 rounded"
           >
             <option value="">--Select--</option>
-            {classOptions.map((cls) => (
-              <option key={cls} value={cls}>
-                {cls}
-              </option>
-            ))}
+            <option value="BTECH">BTECH</option>
+            <option value="Other">Other</option>
           </select>
         </div>
-
+        <div>
+          <label className="block mb-1 font-semibold">Year</label>
+          <select
+            value={formData.year}
+            onChange={(e) =>
+              setFormData({ ...formData, year: e.target.value })
+            }
+            className="border px-4 py-2 rounded"
+          >
+            <option value="">--Select--</option>
+            <option value="1st">1st</option>
+  <option value="2nd">2nd</option>
+  <option value="3rd">3rd</option>
+  <option value="4th">4th</option>
+          </select>
+        </div>
+        <div>
+          <label className="block mb-1 font-semibold">Section</label>
+          <select
+            value={formData.section}
+            onChange={(e) =>
+              setFormData({ ...formData, section: e.target.value })
+            }
+            className="border px-4 py-2 rounded"
+          >
+  <option value="">--Select Section--</option>
+  <option value="A">A</option>
+  <option value="B">B</option>
+  <option value="C">C</option>
+          </select>
+        </div>
         <div>
           <label className="block mb-1 font-semibold">Date</label>
           <input
@@ -236,9 +285,9 @@ export const Attendance = () => {
                                 : "#facc15",
                           }}
                         >
-                          <option value="Present" className="bg-green-400"></option>
-                          <option value="Absent" className="bg-red-400"></option>
-                          <option value="Late" className="bg-yellow-400"></option>
+                          <option value="Present" className="bg-green-400 text-center text-bold">P</option>
+                          <option value="Absent" className="bg-red-400 text-center text-bold">A</option>
+                          <option value="Late" className="bg-yellow-400 text-center text-bold">L</option>
                         </select>
                       </div>
                     </td>

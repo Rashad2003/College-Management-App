@@ -9,12 +9,12 @@ import { toast } from "react-toastify";
 export const Report = () => {
   const { backendUrl } = useContext(StoreContext);
   const [currentPage, setCurrentPage] = useState("Class Report");
-
   const [reportData, setReportData] = useState([]);
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
-
+  const [selectedDepartment, setSelectedDepartment] = useState("");
+  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedSection, setSelectedSection] = useState("");
   const [studentSearchTerm, setStudentSearchTerm] = useState("");
   const [studentsList, setStudentsList] = useState([]);
   const [selectedStudentId, setSelectedStudentId] = useState(null);
@@ -46,13 +46,13 @@ export const Report = () => {
   );
 
   const fetchAttendanceReport = async () => {
-    if (!fromDate || !toDate || !selectedClass) {
+    if (!fromDate || !toDate || !selectedDepartment || !selectedYear || !selectedSection) {
       return toast.error("Please select class and date range");
     }
 
     try {
       const res = await axios.get(`${backendUrl}/api/attendance/class-report`, {
-        params: { fromDate, toDate, class: selectedClass },
+        params: { fromDate, toDate, department: selectedDepartment, year: selectedYear, section: selectedSection },
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -72,12 +72,14 @@ export const Report = () => {
     doc.text("Class Attendance Report", 14, 16);
     autoTable(doc, {
       startY: 20,
-      head: [["No", "Name", "Reg No", "Class", "Total", "Present", "Absent", "%"]],
+      head: [["No", "Name", "Reg No", "Department", "Year", "Section", "Total", "Present", "Absent", "%"]],
       body: reportData.map((entry, i) => [
         i + 1,
         entry.name,
         entry.register,
-        entry.class,
+        entry.department,
+        entry.year,
+        entry.section,
         entry.totalPeriods,
         entry.presentCount,
         entry.totalPeriods - entry.presentCount,
@@ -92,13 +94,15 @@ export const Report = () => {
     doc.text("Student Attendance Report", 14, 16);
     autoTable(doc, {
       startY: 20,
-      head: [["No", "Name", "Reg No", "Class", "Total", "Present", "Absent", "%"]],
+      head: [["No", "Name", "Reg No", "Department", "Year", "Section", "Total", "Present", "Absent", "%"]],
       body: [
         [
           1,
           studentReport.name,
           studentReport.register,
-          studentReport.class,
+          studentReport.department,
+          studentReport.year,
+          studentReport.section,
           studentReport.totalPeriods,
           studentReport.presentCount,
           studentReport.absentCount,
@@ -135,7 +139,7 @@ export const Report = () => {
       </div>
 
       {currentPage === "Class Report" && (
-        <div className="border p-3 md:p-5 lg:mx-[3rem] w-[75vw] overflow-x-scroll my-[1rem] bg-white shadow">
+        <div className="border p-3 md:p-5 lg:mx-[2rem] w-[75vw] overflow-x-scroll my-[1rem] bg-white shadow">
           <div className="flex justify-between">
             <p className="font-bold text-purple-900">Class Report</p>
             <IoPrint
@@ -164,20 +168,46 @@ export const Report = () => {
               />
             </div>
             <div className="flex flex-col">
-              <label className="font-bold">Class:</label>
+              <label className="font-bold">Department:</label>
               <select
-                value={selectedClass}
-                onChange={(e) => setSelectedClass(e.target.value)}
+                value={selectedDepartment}
+                onChange={(e) => setSelectedDepartment(e.target.value)}
                 className="outline-none border px-2 py-1"
               >
                 <option value="">--Select--</option>
-                <option value="Class A">Class A</option>
-                <option value="Class B">Class B</option>
-                <option value="Class C">Class C</option>
+                <option value="BTECH">BTECH</option>
+                <option value="">Other</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="font-bold">Year:</label>
+              <select
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="outline-none border px-2 py-1"
+              >
+                <option value="">--Select--</option>
+                <option value="1st">1st</option>
+                <option value="2nd">2nd</option>
+                <option value="3rd">3rd</option>
+                <option value="4th">4th</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="font-bold">Section:</label>
+              <select
+                value={selectedSection}
+                onChange={(e) => setSelectedSection(e.target.value)}
+                className="outline-none border px-2 py-1"
+              >
+                <option value="">--Select--</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
               </select>
             </div>
             <button
-              className="bg-purple-700 text-white px-4 py-2 rounded self-end"
+              className="bg-purple-700 text-white px-4 py-2 rounded self-end mx-auto"
               onClick={fetchAttendanceReport}
             >
               Generate Report
@@ -190,7 +220,9 @@ export const Report = () => {
                 <th className="border p-2">No.</th>
                 <th className="border p-2">Name</th>
                 <th className="border p-2">Register</th>
-                <th className="border p-2">Class</th>
+                <th className="border p-2">Department</th>
+                <th className="border p-2">Year</th>
+                <th className="border p-2">Section</th>
                 <th className="border p-2">Total Periods</th>
                 <th className="border p-2">Present</th>
                 <th className="border p-2">Absent</th>
@@ -203,7 +235,9 @@ export const Report = () => {
                   <td className="border p-2">{index + 1}</td>
                   <td className="border p-2">{s.name}</td>
                   <td className="border p-2">{s.register}</td>
-                  <td className="border p-2">{s.class}</td>
+                  <td className="border p-2">{s.department}</td>
+                  <td className="border p-2">{s.year}</td>
+                  <td className="border p-2">{s.section}</td>
                   <td className="border p-2">{s.totalPeriods}</td>
                   <td className="border p-2">{s.presentCount}</td>
                   <td className="border p-2">{s.totalPeriods - s.presentCount}</td>
@@ -216,7 +250,7 @@ export const Report = () => {
       )}
 
       {currentPage === "Student Report" && (
-        <div className="p-3 md:p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll bg-white shadow border">
+        <div className="p-3 md:p-5 lg:mx-[2rem] my-[1rem] w-[75vw] overflow-x-scroll bg-white shadow border">
           <label className="font-bold">Search by Name, Register, Email:</label>
           <input
             type="text"
@@ -284,7 +318,9 @@ export const Report = () => {
                   <tr>
                     <th className="border p-2">Name</th>
                     <th className="border p-2">Register</th>
-                    <th className="border p-2">Class</th>
+                    <th className="border p-2">Department</th>
+                    <th className="border p-2">Year</th>
+                    <th className="border p-2">Section</th>
                     <th className="border p-2">Total Periods</th>
                     <th className="border p-2">Present</th>
                     <th className="border p-2">Absent</th>
@@ -295,7 +331,9 @@ export const Report = () => {
                   <tr>
                     <td className="border p-2">{studentReport.name}</td>
                     <td className="border p-2">{studentReport.register}</td>
-                    <td className="border p-2">{studentReport.class}</td>
+                    <td className="border p-2">{studentReport.department}</td>
+                    <td className="border p-2">{studentReport.year}</td>
+                    <td className="border p-2">{studentReport.section}</td>
                     <td className="border p-2">{studentReport.totalPeriods}</td>
                     <td className="border p-2">{studentReport.presentCount}</td>
                     <td className="border p-2">{studentReport.absentCount}</td>

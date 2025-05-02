@@ -13,6 +13,8 @@ import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { TeacherList } from "./pages/TeacherList";
+import { StudentList } from "./pages/StudentList";
 
 const ProtectedRoute = ({ element, role }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -73,6 +75,8 @@ function App() {
             path="/report"
             element={<ProtectedRoute element={<Report />} />}
           />
+          <Route path="/teacherList" element={<TeacherList />} />
+        <Route path="/studentList" element={<StudentList />} />
         </Route>
 
         {/* Redirect unknown routes */}

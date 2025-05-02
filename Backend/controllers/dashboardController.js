@@ -5,7 +5,7 @@ export const getDashboardStats = async (req, res) => {
   try {
     const studentCount = await Student.countDocuments();
     const userCount = await User.countDocuments();
-    const classList = await Student.distinct("class");
+    const classList = await Student.distinct("department");
     const classCount = classList.length;
 
     res.json({
