@@ -41,7 +41,7 @@ export const StudentList = () => {
 
   return (
     <>
-            <div className="border p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
+            <div className="border p-5 lg:mx-[3rem] my-[1rem] mx-auto w-[75vw] overflow-x-scroll">
               <p className="font-bold text-purple-700 text-sm md:text-lg">Students List:</p>
               <div className="flex gap-5 justify-around">
                 <div className="flex flex-col">
