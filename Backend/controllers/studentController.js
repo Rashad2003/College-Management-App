@@ -13,7 +13,7 @@ export const addStudent = async (req, res) => {
     res.status(201).json({ success: true, message: "Student added", student: newStudent });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({ success: false, message: err.message });
   }
 };
 
