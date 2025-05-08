@@ -1,6 +1,6 @@
-import { PiStudent } from "react-icons/pi";
 import DateTime from './DateTime'
 import { MdLogout } from "react-icons/md";
+import Logo from "../assets/Logo.png";
 import {useNavigate } from "react-router-dom";
 
 const Header = () => {
@@ -16,8 +16,7 @@ const Header = () => {
     <nav>
         <div className='grid grid-cols-[1fr] md:grid-cols-[1fr_5fr]'>
             <div className='bg-purple-700 w-full px-[16.5px]'>
-            {/* <PiStudent className="text-[5rem] text-white mx-auto my-2"/> */}
-            <img src="../src/assets/cropped-cropped-CAHCET_LOGO_FULL.png" className="w-[10rem] text-[5rem] text-white mx-auto my-2" alt="" />
+            <img src={Logo} className="w-[10rem] text-[5rem] text-white mx-auto" alt="" />
                 <p className='font-bold text-white text-center'>Attendance Management System</p>
             </div>
             <div>

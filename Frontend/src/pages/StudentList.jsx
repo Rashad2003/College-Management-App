@@ -41,7 +41,7 @@ export const StudentList = () => {
 
   return (
     <>
-            <div className="border p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
+            <div className="border p-5 lg:mx-[3rem] my-[1rem] mx-auto w-[75vw] overflow-x-scroll">
               <p className="font-bold text-purple-700 text-sm md:text-lg">Students List:</p>
               <div className="flex gap-5 justify-around">
                 <div className="flex flex-col">
@@ -66,7 +66,9 @@ export const StudentList = () => {
                 <thead>
                   <tr className="border">
                     <th className="border">Name</th>
-                    <th className="border">Class</th>
+                    <th className="border">Department</th>
+                    <th className="border">Year</th>
+                    <th className="border">Section</th>
                     <th className="border">Register No.</th>
                     <th className="border">Email</th>
                     <th className="border">Phone</th>
@@ -77,9 +79,11 @@ export const StudentList = () => {
                   {filteredUsers.map((user, index) => (
                     <tr key={index} className="border text-center">
                       <td className="border">{highlightMatch(user.name)}</td>
-                      <td className="border">{highlightMatch(user.class)}</td>
+                      <td className="border">{user.department}</td>
+                      <td className="border">{user.year}</td>
+                      <td className="border">{user.section}</td>
                       <td className="border">{user.register}</td>
-                      <td className="border">{user.email}</td>
+                      <td className="border">{highlightMatch(user.email)}</td>
                       <td className="border">{user.phone}</td>
                       <td className="border">{user.gender}</td>
                     </tr>
