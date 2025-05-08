@@ -348,7 +348,7 @@ export const AddStudent = () => {
                     <tr className="bg-gray-100">
                       <th className="border p-2">Select</th>
                       <th className="border p-2">Name</th>
-                      <th className="border p-2">Department</th>
+                      <th className="border p-2">Register</th>
                     </tr>
                   </thead>
                   <tbody>
