@@ -35,22 +35,28 @@ export const Dashboard = () => {
     <div className="flex gap-4 justify-around items-center my-8 flex-wrap">
     <NavLink to="/studentList">
       <div className="h-[150px] w-[150px] bg-orange-400 rounded-2xl shadow-2xl">
+      <div className="h-full flex gap-[1rem] justify-around items-center flex-col">
         <SiGoogleclassroom className="text-[3rem] text-white mx-auto my-2"/>
         <p className="font-bold text-white text-center">Department: {stats.classCount || 0}</p>
+        </div>
       </div>
       </NavLink>
       <NavLink to="/studentList">
-        <div className="h-[150px] w-[150px] bg-blue-400 rounded-2xl shadow-2xl">
+      <div className="h-[150px] w-[150px] bg-blue-400 rounded-2xl shadow-2xl">
+          <div className="h-full flex gap-[1rem] justify-around items-center flex-col">
         <FaUserGraduate className="text-[3rem] text-white mx-auto my-2"/>
           <p className="font-bold text-white text-center">Student: {stats.studentCount || 0}</p>
+          </div>
       </div>
       </NavLink>
     </div>
     <NavLink to="/teacherList">
     <div className="flex gap-4 justify-center items-center">
       <div className="h-[150px] w-[150px] bg-green-400 rounded-2xl shadow-2xl">
+      <div className="h-full flex gap-[1rem] justify-around items-center flex-col">
       <FaUsers className="text-[3rem] text-white mx-auto my-2"/>
       <p className="font-bold text-white text-center">Teacher: {stats.userCount || 0}</p>
+      </div>
       </div>
     </div>
     </NavLink>
