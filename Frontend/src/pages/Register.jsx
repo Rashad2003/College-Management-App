@@ -16,6 +16,7 @@ export const Register = () => {
     password: "",
     gender: "Male",
     role: "Admin",
+    subject: "",
   });
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,6 +36,7 @@ export const Register = () => {
     password: "",
     gender: "Male",
     role: "Admin",
+    subject: "",
   };
 
   const updateUser = async () => {
@@ -91,6 +93,7 @@ export const Register = () => {
           password: "",
           gender: "Male",
           role: "Admin",
+          subject: "",
         });
       } else {
         toast.error(res.data.message);
@@ -233,6 +236,16 @@ export const Register = () => {
                     placeholder="********"
                     className="outline-none border-b mb-6"
                   />
+                  <label htmlFor="subject" className="font-bold">
+                    Subject:
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    onChange={handleChange}
+                    value={formData.subject}
+                    className="outline-none border-b mb-6"
+                  />
                   <label htmlFor="gender" className="font-bold">
                     Gender:
                   </label>
@@ -301,7 +314,8 @@ export const Register = () => {
                     <th className="border">Phone</th>
                     <th className="border">Address</th>
                     <th className="border">Gender</th>
-                    <th className="border">Role</th>
+                    <th className="border">Role</th>                    
+                    <th className="border">Subject</th>                    
                   </tr>
                 </thead>
                 <tbody>
@@ -313,6 +327,7 @@ export const Register = () => {
                       <td className="border">{user.address}</td>
                       <td className="border">{user.gender}</td>
                       <td className="border">{user.role}</td>
+                      <td className="border">{user.subject}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -372,6 +387,7 @@ export const Register = () => {
                     password: "", 
                     gender: selected.gender,
                     role: selected.role,
+                    subject: selected.subject,
                   });
                 }
               }}
@@ -439,6 +455,16 @@ export const Register = () => {
                         onChange={handleChange}
                         className="outline-none border-b mb-4"
                       />
+                      <label htmlFor="subject" className="font-bold">
+                    Subject:
+                  </label>
+                  <input
+                    type="text"
+                    id="subject"
+                    onChange={handleChange}
+                    value={formData.subject}
+                    className="outline-none border-b mb-6"
+                  />
                       <label className="font-bold">Gender:</label>
                       <select
                         id="gender"

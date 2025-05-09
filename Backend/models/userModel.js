@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   dob: Date,
   address: String,
   password: String,
+  subject: String,
   gender: { type: String, enum: ["Male", "Female", "Other"] },
   role: { type: String, enum: ["Admin", "Faculty"] },
   resetToken: String,

@@ -6,7 +6,7 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 
 export const registerUser = async (req, res) => {
-  const { name, email, password, phone, dob, address, gender, role } = req.body;
+  const { name, email, password, phone, dob, address, gender, role, subject } = req.body;
 
   try {
     const existing = await User.findOne({ email });
@@ -23,7 +23,7 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      name, email, phone, dob, address, password: hashedPassword, gender, role
+      name, email, phone, dob, address, password: hashedPassword, gender, role, subject
     });
 
     await newUser.save();
