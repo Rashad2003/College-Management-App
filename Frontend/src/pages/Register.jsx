@@ -455,9 +455,7 @@ export const Register = () => {
                         onChange={handleChange}
                         className="outline-none border-b mb-4"
                       />
-                      <label htmlFor="subject" className="font-bold">
-                    Subject:
-                  </label>
+                      <label className="font-bold">Subject:</label>
                   <input
                     type="text"
                     id="subject"
