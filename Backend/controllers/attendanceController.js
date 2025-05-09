@@ -80,6 +80,8 @@ export const getClassReport = async (req, res) => {
     // Find all students in that class (case-insensitive)
     const students = await Student.find({
       department: { $regex: new RegExp(department, "i") },
+      year,
+      section,
     });
 
     if (!students.length) {
@@ -89,6 +91,8 @@ export const getClassReport = async (req, res) => {
     // Fetch attendance records for the class and date range
     const attendanceRecords = await Attendance.find({
       department: { $regex: new RegExp(department, "i") },
+      year,
+      section,
       date: {
         $gte: new Date(fromDate),
         $lte: new Date(toDate),
