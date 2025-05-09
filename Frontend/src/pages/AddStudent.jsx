@@ -185,7 +185,7 @@ export const AddStudent = () => {
                     className="outline-none mb-6 border"
                   >
                     <option value="">--Select--</option>
-                    <option value="BTECH">BTECH</option>
+                    <option value="IT">IT</option>
                     <option value="Other">Other</option>
                   </select>
                   <label className="font-bold">Year:</label>

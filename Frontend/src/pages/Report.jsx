@@ -175,7 +175,7 @@ export const Report = () => {
                 className="outline-none border px-2 py-1"
               >
                 <option value="">--Select--</option>
-                <option value="BTECH">BTECH</option>
+                <option value="IT">IT</option>
                 <option value="">Other</option>
               </select>
             </div>

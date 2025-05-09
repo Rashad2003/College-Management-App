@@ -201,7 +201,7 @@ export const Attendance = () => {
             className="border px-4 py-2 rounded"
           >
             <option value="">--Select--</option>
-            <option value="BTECH">BTECH</option>
+            <option value="IT">IT</option>
             <option value="Other">Other</option>
           </select>
         </div>
