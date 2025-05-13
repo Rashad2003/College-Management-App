@@ -11,6 +11,7 @@ export const AddStudent = () => {
     department: "",
     year: "",
     section: "",
+    dob: "",
     register: "",
     email:"",
     phone:"",
@@ -32,6 +33,7 @@ export const AddStudent = () => {
     department: "",
     year: "",
     section: "",
+    dob: "",
     register: "",
     email:"",
     phone:"",
@@ -88,6 +90,7 @@ export const AddStudent = () => {
           department: "",
           year: "",
           section: "",
+          dob: "",
           register: "",
           email:"",
           phone:"",
@@ -225,6 +228,14 @@ export const AddStudent = () => {
                   />
                 </div>
                 <div className="flex flex-col">
+                <label className="font-bold">DOB:</label>
+                      <input
+                        type="date"
+                        id="dob"
+                        value={formData.dob}
+                        onChange={handleChange}
+                        className="outline-none border-b mb-6"
+                      />
                   <label htmlFor="register" className="font-bold">
                     Reg No:
                   </label>
@@ -297,6 +308,7 @@ export const AddStudent = () => {
                     <th className="border">Department</th>
                     <th className="border">Year</th>
                     <th className="border">Section</th>
+                    <th className="border">DOB</th>
                     <th className="border">Register No.</th>
                     <th className="border">Email</th>
                     <th className="border">Phone</th>
@@ -310,6 +322,7 @@ export const AddStudent = () => {
                       <td className="border">{user.department}</td>
                       <td className="border">{user.year}</td>
                       <td className="border">{user.section}</td>
+                      <td className="border">{user.dob}</td>
                       <td className="border">{highlightMatch(user.register)}</td>
                       <td className="border">{user.email}</td>
                       <td className="border">{user.phone}</td>
@@ -456,6 +469,14 @@ export const AddStudent = () => {
                   />
                     </div>
                     <div className="flex flex-col">
+                    <label className="font-bold">DOB:</label>
+                      <input
+                        type="date"
+                        id="dob"
+                        value={formData.dob}
+                        onChange={handleChange}
+                        className="outline-none border-b mb-4"
+                      />
                       <label htmlFor="reg" className="font-bold">
                         Reg No:
                       </label>
