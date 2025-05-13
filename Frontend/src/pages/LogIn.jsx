@@ -55,7 +55,7 @@ export const LogIn = ({setToken}) => {
   return (
     <>
       <div className="flex items-center justify-center h-screen bg-gray-100 text-sm md:text-lg">
-        <div className="border p-8 bg-white md:w-[500px] md:h-[400px] rounded-[2rem] shadow-md">
+        <div className="border p-8 bg-white md:w-[500px] md:h-[400px] rounded-2xl shadow-2xl">
           <h1 className="text-center font-bold text-base md:text-2xl mb-4 text-purple-900">Attendance Management System</h1>
           <h1 className="text-center font-bold text-base md:text-2xl">Login</h1>
           <form onSubmit={onSubmitHandler}>
