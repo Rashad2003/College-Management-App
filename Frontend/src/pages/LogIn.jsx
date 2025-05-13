@@ -63,7 +63,7 @@ export const LogIn = ({setToken}) => {
               <label className="mb-2 font-bold" htmlFor="email">Email:</label>
               <input
                 type="email"
-                className="border border-grey-50"
+                className="border border-gray-500"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
                 required
@@ -73,7 +73,7 @@ export const LogIn = ({setToken}) => {
               <label className="mb-2 font-bold" htmlFor="password">Password:</label>
               <input
                 type={showPassword ? "text" : "password"}
-                className="border border-grey-50"
+                className="border border-gray-500"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 required
