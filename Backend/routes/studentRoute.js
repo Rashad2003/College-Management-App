@@ -5,7 +5,6 @@ import {
   updateStudent,
   deleteStudent,
   loginStudent,
-  resetPassword,
 } from "../controllers/studentController.js";
 
 import { authMiddleware, roleMiddleware } from "../middlewares/authMiddleware.js";

@@ -322,7 +322,6 @@ export const AddStudent = () => {
                     <th className="border">DOB</th>
                     <th className="border">Register No.</th>
                     <th className="border">Email</th>
-                    <th className="border">Password</th>
                     <th className="border">Phone</th>
                     <th className="border">Gender</th>
                   </tr>
@@ -337,7 +336,6 @@ export const AddStudent = () => {
                       <td className="border">{user.dob}</td>
                       <td className="border">{highlightMatch(user.register)}</td>
                       <td className="border">{user.email}</td>
-                      <td className="border">{user.password}</td>
                       <td className="border">{user.phone}</td>
                       <td className="border">{user.gender}</td>
                     </tr>
