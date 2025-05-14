@@ -14,6 +14,7 @@ export const AddStudent = () => {
     dob: "",
     register: "",
     email:"",
+    password:"",
     phone:"",
     gender: "Male",
   });
@@ -36,6 +37,7 @@ export const AddStudent = () => {
     dob: "",
     register: "",
     email:"",
+    password:"",
     phone:"",
     gender: "Male",
   };
@@ -93,6 +95,7 @@ export const AddStudent = () => {
           dob: "",
           register: "",
           email:"",
+          password:"",
           phone:"",
           gender: "Male",
         });
@@ -256,6 +259,14 @@ export const AddStudent = () => {
                     id="email"
                     className="outline-none border-b mb-6"
                   />
+                    <label className="font-bold">Password:</label>
+                      <input
+                        type="text"
+                        id="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="outline-none border-b mb-4"
+                      />
                   <label htmlFor="gender" className="font-bold">
                     Gender:
                   </label>
@@ -311,6 +322,7 @@ export const AddStudent = () => {
                     <th className="border">DOB</th>
                     <th className="border">Register No.</th>
                     <th className="border">Email</th>
+                    <th className="border">Password</th>
                     <th className="border">Phone</th>
                     <th className="border">Gender</th>
                   </tr>
@@ -325,6 +337,7 @@ export const AddStudent = () => {
                       <td className="border">{user.dob}</td>
                       <td className="border">{highlightMatch(user.register)}</td>
                       <td className="border">{user.email}</td>
+                      <td className="border">{user.password}</td>
                       <td className="border">{user.phone}</td>
                       <td className="border">{user.gender}</td>
                     </tr>
@@ -386,7 +399,9 @@ export const AddStudent = () => {
                                   year: selected.year,
                                   section: selected.section,
                                   register: selected.register,
+                                  dob: selected.dob?.slice(0, 10),
                                   email: selected.email,
+                                  password: "",
                                   phone: selected.phone,
                                   gender: selected.gender,
                                 });
@@ -429,7 +444,7 @@ export const AddStudent = () => {
                     className="outline-none mb-6 border"
                   >
                     <option value="">--Select--</option>
-                    <option value="BTECH">BTECH</option>
+                    <option value="IT">IT</option>
                     <option value="Other">Other</option>
                   </select>
                   <label className="font-bold">Year:</label>
@@ -496,7 +511,15 @@ export const AddStudent = () => {
                     type="email"
                     id="email"
                     className="outline-none border-b mb-6"
-                  />                 
+                  />
+                    <label className="font-bold">Password:</label>
+                      <input
+                        type="text"
+                        id="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        className="outline-none border-b mb-4"
+                      />                
                       <label className="font-bold">Gender:</label>
                       <select
                         id="gender"

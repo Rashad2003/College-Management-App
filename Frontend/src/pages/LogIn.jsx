@@ -50,6 +50,24 @@ export const LogIn = ({setToken}) => {
       console.log(error);
       toast.error(error.response.data.message);
     }
+
+    try {
+      const response = await axios.post(backendUrl + "/api/student/login", {
+        email,
+        password,
+      });
+      if (response.status === 200) {
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+        setToken(res.data.token);
+        navigate("/student/dashboard");
+      } else {
+        toast.success(res.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
@@ -58,7 +76,9 @@ export const LogIn = ({setToken}) => {
         <div className="p-8 bg-white md:w-[500px] md:h-[400px] rounded-2xl shadow-2xl">
           <h1 className="text-center font-bold text-base md:text-2xl mb-4 text-purple-900">Attendance Management System</h1>
           <h1 className="text-center font-bold text-base md:text-2xl">Login</h1>
-          <form onSubmit={onSubmitHandler}>
+          <form onSubmit={
+            onSubmitHandler
+            }>
             <div className="flex flex-col mb-4">
               <label className="mb-2 font-bold" htmlFor="email">Email:</label>
               <input
