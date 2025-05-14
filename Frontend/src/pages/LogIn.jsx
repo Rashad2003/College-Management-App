@@ -50,24 +50,6 @@ export const LogIn = ({setToken}) => {
       console.log(error);
       toast.error(error.response.data.message);
     }
-
-    try {
-      const response = await axios.post(backendUrl + "/api/student/login", {
-        email,
-        password,
-      });
-      if (response.status === 200) {
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
-        setToken(res.data.token);
-        navigate("/student/dashboard");
-      } else {
-        toast.success(res.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response.data.message);
-    }
   };
 
   return (

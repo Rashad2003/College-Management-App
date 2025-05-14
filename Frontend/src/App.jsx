@@ -52,7 +52,6 @@ function App() {
         {/* Login Route (No header/sidebar) */}
         <Route path="/login" element={<LogIn setToken={setToken} />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-
         {/* Protected Routes inside Layout */}
         <Route element={<Layout />}>
           <Route

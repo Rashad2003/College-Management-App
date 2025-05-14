@@ -10,7 +10,6 @@ const studentSchema = new mongoose.Schema({
   department: String,
 year: String,
 section: String,
-password: String,
 });
 
 const Student = mongoose.models.Student || mongoose.model("Student", studentSchema);
