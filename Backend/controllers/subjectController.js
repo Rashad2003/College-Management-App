@@ -7,7 +7,7 @@ export const getAllSubjects = async (req, res) => {
       await subject.save();
       res.status(201).json({ message: 'Subject added successfully', subject });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to add subject' });
+      res.status(500).json({ error: error.message });
     }
   }
 

@@ -68,7 +68,7 @@ function App() {
             element={<ProtectedRoute element={<AddStudent />} role="Admin" />}
           />
           <Route
-            path="/sunject"
+            path="/subject"
             element={<ProtectedRoute element={<AddSubject />} role="Admin" />}
           />
           <Route
