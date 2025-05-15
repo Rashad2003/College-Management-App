@@ -7,6 +7,7 @@ import studentRoutes from "./routes/studentRoute.js";
 import attendanceRoutes from "./routes/attendanceRoute.js";
 import dashboardRoutes from "./routes/dashboardRoute.js";
 import {connectDB} from "./config/db.js";
+import subjectRoutes from "./routes/subjectRoute.js";
 
 const app = express();
 app.use(cors());
@@ -16,6 +17,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/student", studentRoutes);
 app.use("/api/attendance", attendanceRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/subject", subjectRoutes);
 
 connectDB();
 

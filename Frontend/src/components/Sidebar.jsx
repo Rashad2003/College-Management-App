@@ -36,6 +36,11 @@ const Sidebar = () => {
               </NavLink>
             </li>
             <li>
+              <NavLink to="/subject" className={navLinkClass}>
+                <FaUserGraduate /> <p className="hidden md:block">Subject</p>
+              </NavLink>
+            </li>
+            <li>
               <NavLink to="/register" className={navLinkClass}>
                 <FaCog /> <p className="hidden md:block">Register</p>
               </NavLink>
