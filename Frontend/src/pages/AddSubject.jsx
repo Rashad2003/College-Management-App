@@ -7,6 +7,10 @@ import axios from 'axios';
 function AddSubject() {
   const { backendUrl } = useContext(StoreContext);
   const [currentPage, setCurrentPage] = useState("Add Subject");
+  const [selectedDept, setSelectedDept] = useState('');
+const [selectedYear, setSelectedYear] = useState('');
+const [selectedSemester, setSelectedSemester] = useState('');
+const [subjectList, setSubjectList] = useState([]);
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -36,6 +40,25 @@ function AddSubject() {
       toast.error("Something went wrong");
     }
   };
+
+  const fetchSubjects = async () => {
+    const res = await axios.get(backendUrl + '/api/subject/list', {
+      params: {
+        department: selectedDept,
+        year: selectedYear,
+        semester: selectedSemester
+      }
+    });
+    setSubjectList(res.data);
+  };
+
+  useEffect(() => {
+    if (selectedDept && selectedYear && selectedSemester) {
+      fetchSubjects();
+    }
+  }, [selectedDept, selectedYear, selectedSemester]);
+  
+  
 
   return (
     <>
@@ -181,63 +204,66 @@ id="type"
               </div>
             </div>
           )}
-          {currentPage === "Search Student" && (
+          {currentPage === "List Subject" && (
             <div className="border p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
-              <p className="font-bold text-purple-700 text-sm md:text-lg">Search Students:</p>
-              <div className="flex gap-5 justify-around">
-                <div className="flex flex-col">
-                  <label htmlFor="search" className="font-bold">
-                    Search:
-                  </label>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      placeholder="Search by Name or Email"
-                      id="search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="outline-none border-b mb-6"
-                    />
-                    <IoSearchOutline className="text-[1.5rem] font-bold" />
-                  </div>
-                </div>
-              </div>
-              <div className="overflow-x-auto mt-6">
-              <table className="min-w-[800px] w-full border-collapse border text-sm md:text-lg text-center">
-                <thead>
-                  <tr className="border">
-                    <th className="border">Name</th>
-                    <th className="border">Department</th>
-                    <th className="border">Year</th>
-                    <th className="border">Section</th>
-                    <th className="border">DOB</th>
-                    <th className="border">Register No.</th>
-                    <th className="border">Email</th>
-                    <th className="border">Phone</th>
-                    <th className="border">Gender</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map((user, index) => (
-                    <tr key={index} className="border text-center">
-                      <td className="border">{highlightMatch(user.name)}</td>
-                      <td className="border">{user.department}</td>
-                      <td className="border">{user.year}</td>
-                      <td className="border">{user.section}</td>
-                      <td className="border">{user.dob}</td>
-                      <td className="border">{highlightMatch(user.register)}</td>
-                      <td className="border">{user.email}</td>
-                      <td className="border">{user.phone}</td>
-                      <td className="border">{user.gender}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              </div>
+              <p className="font-bold text-purple-700 text-sm md:text-lg">List Subject:</p>
+              <div className="flex gap-4 flex-wrap">
+        <select
+          value={selectedDept}
+          onChange={(e) => setSelectedDept(e.target.value)}
+          className="p-2 border rounded"
+        >
+          <option value="">Select Department</option>
+          {departments.map((dept, idx) => (
+            <option key={idx} value={dept}>{dept}</option>
+          ))}
+        </select>
 
-              <div className="flex justify-start md:justify-end">
-                <p>Total Students: {userList.length}</p>
-              </div>
+        <select
+          value={selectedSemester}
+          onChange={(e) => setSelectedSemester(e.target.value)}
+          className="p-2 border rounded"
+        >
+          <option value="">Select Semester</option>
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
+            <option key={sem} value={sem}>{sem}</option>
+          ))}
+        </select>
+
+        <button
+          onClick={fetchSubjects}
+          className="px-4 py-2 bg-blue-600 text-white rounded"
+        >
+          Fetch Subjects
+        </button>
+      </div>
+
+              {subjects.length > 0 ? (
+                <table className="w-full border text-center">
+                  <thead>
+                    <tr className="bg-gray-100">
+                      <th className="border p-2">Subject Code</th>
+                      <th className="border p-2">Subject Name</th>
+                      <th className="border p-2">Department</th>
+                      <th className="border p-2">Semester</th>
+                      <th className="border p-2">Type</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {subjects.map((subject) => (
+                      <tr key={subject._id}>
+                        <td className="border p-2">{subject.code}</td>
+                        <td className="border p-2">{subject.name}</td>
+                        <td className="border p-2">{subject.department}</td>
+                        <td className="border p-2">{subject.semester}</td>
+                        <td className="border p-2">{subject.type}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p>No subjects found.</p>
+              )}
             </div>
           )}
           {currentPage === "Update and Delete Student" && (
