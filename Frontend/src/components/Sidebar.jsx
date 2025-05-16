@@ -23,6 +23,15 @@ const Sidebar = () => {
         </li>
         </>
       )}
+      {user?.role === "Faculty" && (
+        <>
+        <li>
+          <NavLink to="/faculty/dashboard" className={navLinkClass}>
+            <FaClipboardList /> <p className="hidden md:block">Dashboard</p>
+          </NavLink>
+        </li>
+        </>
+      )}
         <li>
           <NavLink to="/attendance" className={navLinkClass}>
             <FaBook /> <p className="hidden md:block">Attendance</p>
@@ -35,11 +44,11 @@ const Sidebar = () => {
                 <FaUserGraduate /> <p className="hidden md:block">Student</p>
               </NavLink>
             </li>
-            <li>
+            {/* <li>
               <NavLink to="/subject" className={navLinkClass}>
                 <FaUserGraduate /> <p className="hidden md:block">Subject</p>
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink to="/register" className={navLinkClass}>
                 <FaCog /> <p className="hidden md:block">Register</p>

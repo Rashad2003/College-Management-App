@@ -16,6 +16,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { TeacherList } from "./pages/TeacherList";
 import { StudentList } from "./pages/StudentList";
 import AddSubject from "./pages/AddSubject";
+import { FacultyDashboard } from "./pages/FacultyDashboard";
 
 const ProtectedRoute = ({ element, role }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -74,6 +75,10 @@ function App() {
           <Route
             path="/attendance"
             element={<ProtectedRoute element={<Attendance />} />}
+          />
+          <Route
+            path="/faculty/dashboard"
+            element={<ProtectedRoute element={<FacultyDashboard />} />}
           />
           <Route
             path="/report"

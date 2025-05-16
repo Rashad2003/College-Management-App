@@ -27,7 +27,7 @@ function AddSubject() {
       if (res.data.success) {
         toast.success("Subject added successfully!");
         setForm({
-          name: '', code: '', department: '', year: '', semester: '', type: '' 
+          name: '', code: '', department: '', year: '', semester: ''
         });
       } else {
         toast.success(res.data.message);
