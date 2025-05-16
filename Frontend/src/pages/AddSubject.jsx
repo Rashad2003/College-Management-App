@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { IoSearchOutline } from "react-icons/io5";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { StoreContext } from "../context/StoreContext";
 import axios from 'axios';
@@ -7,10 +6,6 @@ import axios from 'axios';
 function AddSubject() {
   const { backendUrl } = useContext(StoreContext);
   const [currentPage, setCurrentPage] = useState("Add Subject");
-  const [selectedDept, setSelectedDept] = useState('');
-const [selectedYear, setSelectedYear] = useState('');
-const [selectedSemester, setSelectedSemester] = useState('');
-const [subjectList, setSubjectList] = useState([]);
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -18,6 +13,8 @@ const [subjectList, setSubjectList] = useState([]);
   const [form, setForm] = useState({
     name: '', code: '', department: '', year: '', semester: '', type: ''
   });
+  const [department, setDepartment] = useState("");
+  const [groupedSubjects, setGroupedSubjects] = useState({});
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -42,23 +39,31 @@ const [subjectList, setSubjectList] = useState([]);
   };
 
   const fetchSubjects = async () => {
-    const res = await axios.get(backendUrl + '/api/subject/list', {
-      params: {
-        department: selectedDept,
-        year: selectedYear,
-        semester: selectedSemester
+    try {
+      if (!department.trim()) {
+        toast.warning("Please enter a department.");
+        return;
       }
-    });
-    setSubjectList(res.data);
-  };
+  
+      const res = await axios.get(backendUrl + '/api/subject/list');
+  console.log(res.data)
+      if (res.data.success) {
+        const subjects = res.data;
 
-  useEffect(() => {
-    if (selectedDept && selectedYear && selectedSemester) {
-      fetchSubjects();
+        // Group by semester
+        const grouped = {};
+        for (let i = 1; i <= 8; i++) {
+          grouped[i] = subjects.filter((subj) => parseInt(subj.semester) === i);
+        }
+        setGroupedSubjects(grouped);
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching subjects:", error);
+      toast.error("Failed to fetch subjects");
     }
-  }, [selectedDept, selectedYear, selectedSemester]);
-  
-  
+  };
 
   return (
     <>
@@ -205,66 +210,55 @@ id="type"
             </div>
           )}
           {currentPage === "List Subject" && (
-            <div className="border p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
-              <p className="font-bold text-purple-700 text-sm md:text-lg">List Subject:</p>
-              <div className="flex gap-4 flex-wrap">
-        <select
-          value={selectedDept}
-          onChange={(e) => setSelectedDept(e.target.value)}
-          className="p-2 border rounded"
-        >
-          <option value="">Select Department</option>
-          {departments.map((dept, idx) => (
-            <option key={idx} value={dept}>{dept}</option>
-          ))}
-        </select>
-
-        <select
-          value={selectedSemester}
-          onChange={(e) => setSelectedSemester(e.target.value)}
-          className="p-2 border rounded"
-        >
-          <option value="">Select Semester</option>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((sem) => (
-            <option key={sem} value={sem}>{sem}</option>
-          ))}
-        </select>
-
-        <button
-          onClick={fetchSubjects}
-          className="px-4 py-2 bg-blue-600 text-white rounded"
-        >
-          Fetch Subjects
-        </button>
-      </div>
-
-              {subjects.length > 0 ? (
-                <table className="w-full border text-center">
-                  <thead>
-                    <tr className="bg-gray-100">
-                      <th className="border p-2">Subject Code</th>
-                      <th className="border p-2">Subject Name</th>
-                      <th className="border p-2">Department</th>
-                      <th className="border p-2">Semester</th>
-                      <th className="border p-2">Type</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {subjects.map((subject) => (
-                      <tr key={subject._id}>
-                        <td className="border p-2">{subject.code}</td>
-                        <td className="border p-2">{subject.name}</td>
-                        <td className="border p-2">{subject.department}</td>
-                        <td className="border p-2">{subject.semester}</td>
-                        <td className="border p-2">{subject.type}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              ) : (
-                <p>No subjects found.</p>
-              )}
-            </div>
+             <div className="p-6 max-w-4xl mx-auto">
+             <h1 className="text-2xl font-bold mb-4 text-center">Subject List</h1>
+       
+             <div className="mb-6 flex gap-4 items-center">
+               <select
+                    name="department"
+                    id="department"
+                    value={department}
+                    onChange={(e) => setDepartment(e.target.value)}
+                    className="border p-2 rounded w-full"
+                  >
+                    <option value="">--Select Department--</option>
+                    <option value="IT">IT</option>
+                    <option value="Other">Other</option>
+                  </select>
+               <button
+                 onClick={fetchSubjects}
+                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+               >
+                 Search
+               </button>
+             </div>
+       
+             {Object.entries(groupedSubjects).map(([sem, subjects]) => (
+               subjects.length.length > 0 && (
+                 <div key={sem} className="mb-10">
+                   <h2 className="text-lg font-semibold text-blue-600 mb-2">Semester {sem}</h2>
+                   <table className="w-full border border-collapse">
+                     <thead className="bg-gray-200">
+                       <tr>
+                         <th className="border p-2">S.No</th>
+                         <th className="border p-2">Subject Code</th>
+                         <th className="border p-2">Subject Name</th>
+                       </tr>
+                     </thead>
+                     <tbody>
+                       {subjects.map((subj, idx) => (
+                         <tr key={idx}>
+                           <td className="border p-2">{idx + 1}</td>
+                           <td className="border p-2">{subj.code}</td>
+                           <td className="border p-2">{subj.name}</td>
+                         </tr>
+                       ))}
+                     </tbody>
+                   </table>
+                 </div>
+               )
+             ))}
+           </div>
           )}
           {currentPage === "Update and Delete Student" && (
             <div className="border p-2 md:p-5 md:mx-[3rem] my-[1rem]">

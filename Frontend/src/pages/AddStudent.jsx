@@ -283,63 +283,191 @@ export const AddStudent = () => {
             </div>
           )}
           {currentPage === "Search Student" && (
-            <div className="border p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
-              <p className="font-bold text-purple-700 text-sm md:text-lg">Search Students:</p>
-              <div className="flex gap-5 justify-around">
-                <div className="flex flex-col">
-                  <label htmlFor="search" className="font-bold">
-                    Search:
-                  </label>
-                  <div className="flex">
-                    <input
-                      type="text"
-                      placeholder="Search by Name or Email"
-                      id="search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="outline-none border-b mb-6"
-                    />
-                    <IoSearchOutline className="text-[1.5rem] font-bold" />
-                  </div>
-                </div>
-              </div>
-              <div className="overflow-x-auto mt-6">
-              <table className="min-w-[800px] w-full border-collapse border text-sm md:text-lg text-center">
+            <div className="border p-2 md:p-5 md:mx-[3rem] my-[1rem]">
+            <p className="font-bold text-purple-700 text-sm md:text-lg">
+              Search Students:
+            </p>
+
+            <div className="flex gap-5 justify-start md:items-center flex-col md:flex-row my-4">
+              <label className="font-bold text-sm md:text-lg">Search:</label>
+              <input
+                type="text"
+                placeholder="Search by name or register no."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="outline-none border-b px-2 text-sm md:text-lg"
+              />
+              <IoSearchOutline className="text-[1.5rem] font-bold" />
+            </div>
+
+            {searchTerm && !selectedUserId && (
+              <table className="w-full border text-center">
                 <thead>
-                  <tr className="border">
-                    <th className="border">Name</th>
-                    <th className="border">Department</th>
-                    <th className="border">Year</th>
-                    <th className="border">Section</th>
-                    <th className="border">DOB</th>
-                    <th className="border">Register No.</th>
-                    <th className="border">Email</th>
-                    <th className="border">Phone</th>
-                    <th className="border">Gender</th>
+                  <tr className="bg-gray-100">
+                    <th className="border p-2">Select</th>
+                    <th className="border p-2">Name</th>
+                    <th className="border p-2">Register</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user, index) => (
-                    <tr key={index} className="border text-center">
-                      <td className="border">{highlightMatch(user.name)}</td>
-                      <td className="border">{user.department}</td>
-                      <td className="border">{user.year}</td>
-                      <td className="border">{user.section}</td>
-                      <td className="border">{user.dob}</td>
-                      <td className="border">{highlightMatch(user.register)}</td>
-                      <td className="border">{user.email}</td>
-                      <td className="border">{user.phone}</td>
-                      <td className="border">{user.gender}</td>
+                  {filteredUsers.map((user) => (
+                    <tr key={user._id}>
+                      <td className="border p-2">
+                        <input
+                          type="checkbox"
+                          checked={selectedUserId === user._id}
+                          onChange={() => {
+                            const selected = userList.find(
+                              (u) => u._id === user._id
+                            );
+                            if (selectedUserId === user._id) {
+                              setSelectedUserId(null);
+                              setFormData(initialState);
+                            } else {
+                              setSelectedUserId(user._id);
+                              setFormData({
+                                name: selected.name,
+                                department: selected.department,
+                                year: selected.year,
+                                section: selected.section,
+                                register: selected.register,
+                                dob: selected.dob?.slice(0, 10),
+                                email: selected.email,
+                                phone: selected.phone,
+                                gender: selected.gender,
+                              });
+                            }
+                          }}
+                        />
+                      </td>
+                      <td className="border p-2">
+                        {highlightMatch(user.name)}
+                      </td>
+                      <td className="border p-2">
+                        {highlightMatch(user.register)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-              </div>
+            )}
 
-              <div className="flex justify-start md:justify-end">
-                <p>Total Students: {userList.length}</p>
-              </div>
-            </div>
+            {selectedUserId && (
+              <>
+                <div className="flex md:gap-5 justify-around flex-col md:flex-row mt-6">
+                  <div className="flex flex-col">
+                    <label className="font-bold">Name:</label>
+                    <input
+                      type="text"
+                      id="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="outline-none border-b mb-4"
+                      disabled
+                    />
+                      <label htmlFor="Class" className="font-bold">
+                  Select Department:
+                </label>
+                <select
+                  name="department"
+                  id="department"
+                  value={formData.department}
+                  onChange={handleChange}
+                  className="outline-none mb-6 border"
+                  disabled
+                >
+                  <option value="">--Select--</option>
+                  <option value="IT">IT</option>
+                  <option value="Other">Other</option>
+                </select>
+                <label className="font-bold">Year:</label>
+<select
+id="year"
+value={formData.year}
+onChange={handleChange}
+className="outline-none mb-4 border"
+disabled
+>
+<option value="">--Select Year--</option>
+<option value="1st">1st</option>
+<option value="2nd">2nd</option>
+<option value="3rd">3rd</option>
+<option value="4th">4th</option>
+</select>
+<label className="font-bold">Section:</label>
+<select
+id="section"
+value={formData.section}
+onChange={handleChange}
+className="outline-none mb-4 border"
+disabled
+>
+<option value="">--Select Section--</option>
+<option value="A">A</option>
+<option value="B">B</option>
+<option value="C">C</option>
+</select>
+                     <label htmlFor="phone" className="font-bold">
+                  Phone No.
+                </label>
+                <input
+                  value={formData.phone}
+                  onChange={handleChange}
+                  type="text"
+                  id="phone"
+                  className="outline-none border-b mb-6"
+                  disabled
+                />
+                  </div>
+                  <div className="flex flex-col">
+                  <label className="font-bold">DOB:</label>
+                    <input
+                      type="date"
+                      id="dob"
+                      value={formData.dob}
+                      onChange={handleChange}
+                      className="outline-none border-b mb-4"
+                      disabled
+                    />
+                    <label htmlFor="reg" className="font-bold">
+                      Register No:
+                    </label>
+                    <input
+                      value={formData.register}
+                      onChange={handleChange}
+                      type="text"
+                      id="reg"
+                      className="outline-none border-b mb-6"
+                      disabled
+                    />
+                    <label htmlFor="email" className="font-bold">
+                  Email:
+                </label>
+                <input
+                  value={formData.email}
+                  onChange={handleChange}
+                  type="email"
+                  id="email"
+                  className="outline-none border-b mb-6"
+                  disabled
+                />              
+                    <label className="font-bold">Gender:</label>
+                    <select
+                      id="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="border mb-4"
+                      disabled
+                    >
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
           )}
           {currentPage === "Update and Delete Student" && (
             <div className="border p-2 md:p-5 md:mx-[3rem] my-[1rem]">
@@ -356,6 +484,7 @@ export const AddStudent = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="outline-none border-b px-2 text-sm md:text-lg"
                 />
+                <IoSearchOutline className="text-[1.5rem] font-bold" />
               </div>
 
               {searchTerm && !selectedUserId && (
@@ -421,6 +550,7 @@ export const AddStudent = () => {
                         value={formData.name}
                         onChange={handleChange}
                         className="outline-none border-b mb-4"
+                        disabled
                       />
                         <label htmlFor="Class" className="font-bold">
                     Select Department:

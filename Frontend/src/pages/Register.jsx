@@ -17,6 +17,8 @@ export const Register = () => {
     gender: "Male",
     role: "Admin",
     subject: "",
+    designation: "",
+    facultyCode: "",
   });
   const [userList, setUserList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +39,8 @@ export const Register = () => {
     gender: "Male",
     role: "Admin",
     subject: "",
+    designation: "",
+    facultyCode: "",
   };
 
   const updateUser = async () => {
@@ -94,6 +98,8 @@ export const Register = () => {
           gender: "Male",
           role: "Admin",
           subject: "",
+          designation: "",
+    facultyCode: "",
         });
       } else {
         toast.error(res.data.message);
@@ -246,6 +252,26 @@ export const Register = () => {
                     value={formData.subject}
                     className="outline-none border-b mb-6"
                   />
+                  <label htmlFor="designation" className="font-bold">
+                    Designation:
+                  </label>
+                  <input
+                    type="text"
+                    id="designation"
+                    onChange={handleChange}
+                    value={formData.designation}
+                    className="outline-none border-b mb-6"
+                  />
+                  <label htmlFor="facultyCode" className="font-bold">
+                  Faculty Code:
+                  </label>
+                  <input
+                    type="text"
+                    id="facultyCode"
+                    onChange={handleChange}
+                    value={formData.facultyCode}
+                    className="outline-none border-b mb-6"
+                  />
                   <label htmlFor="gender" className="font-bold">
                     Gender:
                   </label>
@@ -285,58 +311,181 @@ export const Register = () => {
             </div>
           )}
           {currentPage === "Search User" && (
-            <div className="border p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
-              <p className="font-bold text-purple-700">Search User:</p>
-              <div className="flex gap-5 justify-around">
-                <div className="flex flex-col">
-                  <label htmlFor="search" className="font-bold">
-                    Search:
-                  </label>
-                  <div className="flex">
+            <div className="border p-2 md:p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
+            <p className="font-bold text-purple-700 text-sm md:text-lg">
+              Update or Delete User:
+            </p>
+
+            <div className="flex gap-5 justify-start md:items-center flex-col md:flex-row my-4">
+              <label className="font-bold text-sm md:text-lg">Search:</label>
+              <input
+                type="text"
+                placeholder="Search by name or email"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="outline-none border-b px-2 text-sm md:text-lg"
+              />
+                        <IoSearchOutline className="text-[1.5rem] font-bold" />
+            </div>
+
+            {searchTerm && !selectedUserId && (
+<table className="w-full border text-center text-sm md:text-lg min-w-[800px] mt-4">
+  <thead>
+    <tr className="bg-gray-100">
+      <th className="border p-2">Select</th>
+      <th className="border p-2">Name</th>
+      <th className="border p-2">Email</th>
+    </tr>
+  </thead>
+  <tbody>
+    {filteredUsers.map((user) => (
+      <tr key={user._id}>
+        <td className="border p-2">
+          <input
+            type="checkbox"
+            checked={selectedUserId === user._id}
+            onChange={() => {
+              const selected = userList.find((u) => u._id === user._id);
+              if (selectedUserId === user._id) {
+                setSelectedUserId(null);
+                setFormData(initialState);
+              } else {
+                setSelectedUserId(user._id);
+                setFormData({
+                  name: selected.name,
+                  phone: selected.phone,
+                  dob: selected.dob?.slice(0, 10),
+                  email: selected.email,
+                  address: selected.address,
+                  password: "", 
+                  gender: selected.gender,
+                  role: selected.role,
+                  subject: selected.subject,
+                  designation: selected.designation,
+                  facultyCode: selected.facultyCode,
+                });
+              }
+            }}
+          />
+        </td>
+        <td className="border p-2">{highlightMatch(user.name)}</td>
+        <td className="border p-2">{highlightMatch(user.email)}</td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+)}
+
+            {selectedUserId && (
+              <>
+                <div className="flex md:gap-5 justify-around flex-col md:flex-row mt-6">
+                  <div className="flex flex-col">
+                    <label className="font-bold">Name:</label>
                     <input
                       type="text"
-                      placeholder="Search by Name or Email"
-                      id="search"
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="outline-none border-b mb-6"
+                      id="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="outline-none border-b mb-4"
+                      disabled
                     />
-                    <IoSearchOutline className="text-[1.5rem] font-bold" />
+                    <label className="font-bold">Phone No:</label>
+                    <input
+                      type="number"
+                      id="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      className="outline-none border-b mb-4"
+                      disabled
+                    />
+                    <label className="font-bold">DOB:</label>
+                    <input
+                      type="date"
+                      id="dob"
+                      value={formData.dob}
+                      onChange={handleChange}
+                      className="outline-none border-b mb-4"
+                      disabled
+                    />
+                    <label className="font-bold">Email:</label>
+                    <input
+                      type="email"
+                      id="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="outline-none border-b mb-4"
+                      disabled
+                    />
+                    <label className="font-bold">Address:</label>
+                    <input
+                      type="text"
+                      id="address"
+                      value={formData.address}
+                      onChange={handleChange}
+                      className="outline-none border-b mb-4"
+                      disabled
+                    />
+                  </div>
+                  <div className="flex flex-col">
+                    <label className="font-bold">Subject:</label>
+                <input
+                  type="text"
+                  id="subject"
+                  onChange={handleChange}
+                  value={formData.subject}
+                  className="outline-none border-b mb-6"
+                  disabled
+                />
+                <label htmlFor="designation" className="font-bold">
+                    Designation:
+                  </label>
+                  <input
+                    type="text"
+                    id="designation"
+                    onChange={handleChange}
+                    value={formData.designation}
+                    className="outline-none border-b mb-6"
+                    disabled
+                  />
+                  <label htmlFor="facultyCode" className="font-bold">
+                  Faculty Code:
+                  </label>
+                  <input
+                    type="text"
+                    id="facultyCode"
+                    onChange={handleChange}
+                    value={formData.facultyCode}
+                    className="outline-none border-b mb-6"
+                    disabled
+                  />
+                    <label className="font-bold">Gender:</label>
+                    <select
+                      id="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="border mb-4"
+                      disabled
+                    >
+                      <option>Male</option>
+                      <option>Female</option>
+                      <option>Other</option>
+                    </select>
+                    <label className="font-bold">Role:</label>
+                    <select
+                      id="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      className="border mb-4"
+                      disabled
+                    >
+                      <option value="Admin">Admin</option>
+                      <option value="Faculty">Faculty</option>
+                    </select>
                   </div>
                 </div>
-              </div>
-              <div className="overflow-x-auto mt-6"></div>
-              <table className="min-w-[800px] w-full border-collapse border text-sm md:text-lg text-center">
-                <thead>
-                  <tr className="border">
-                    <th className="border">Name</th>
-                    <th className="border">Email</th>
-                    <th className="border">Phone</th>
-                    <th className="border">Address</th>
-                    <th className="border">Gender</th>
-                    <th className="border">Role</th>                    
-                    <th className="border">Subject</th>                    
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map((user, index) => (
-                    <tr key={index} className="border text-center">
-                      <td className="border">{highlightMatch(user.name)}</td>
-                      <td className="border">{highlightMatch(user.email)}</td>
-                      <td className="border">{user.phone}</td>
-                      <td className="border">{user.address}</td>
-                      <td className="border">{user.gender}</td>
-                      <td className="border">{user.role}</td>
-                      <td className="border">{user.subject}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-
-              <div className="flex justify-start lg:justify-end">
-                <p>Total Users: {userList.length}</p>
-              </div>
-            </div>
+              </>
+            )}
+          </div>
           )}
           {currentPage === "Update and Delete User" && (
             <div className="border p-2 md:p-5 lg:mx-[3rem] my-[1rem] w-[75vw] overflow-x-scroll">
@@ -353,6 +502,7 @@ export const Register = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="outline-none border-b px-2 text-sm md:text-lg"
                 />
+                          <IoSearchOutline className="text-[1.5rem] font-bold" />
               </div>
 
               {searchTerm && !selectedUserId && (
@@ -388,6 +538,8 @@ export const Register = () => {
                     gender: selected.gender,
                     role: selected.role,
                     subject: selected.subject,
+                    designation: selected.designation,
+                    facultyCode: selected.facultyCode,
                   });
                 }
               }}
@@ -461,6 +613,26 @@ export const Register = () => {
                     id="subject"
                     onChange={handleChange}
                     value={formData.subject}
+                    className="outline-none border-b mb-6"
+                  />
+                  <label htmlFor="designation" className="font-bold">
+                    Designation:
+                  </label>
+                  <input
+                    type="text"
+                    id="designation"
+                    onChange={handleChange}
+                    value={formData.designation}
+                    className="outline-none border-b mb-6"
+                  />
+                  <label htmlFor="facultyCode" className="font-bold">
+                  Faculty Code:
+                  </label>
+                  <input
+                    type="text"
+                    id="facultyCode"
+                    onChange={handleChange}
+                    value={formData.facultyCode}
                     className="outline-none border-b mb-6"
                   />
                       <label className="font-bold">Gender:</label>

@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   subject: String,
   gender: { type: String, enum: ["Male", "Female", "Other"] },
   role: { type: String, enum: ["Admin", "Faculty"] },
+  designation: String,
+  facultyCode: String,
   resetToken: String,
   resetTokenExpiry: Date,
 });
