@@ -17,7 +17,7 @@ import { TeacherList } from "./pages/TeacherList";
 import { StudentList } from "./pages/StudentList";
 import AddSubject from "./pages/AddSubject";
 import { FacultyDashboard } from "./pages/FacultyDashboard";
-import { Department } from "./pages/department";
+import { Department } from "./pages/Department";
 
 const ProtectedRoute = ({ element, role }) => {
   const user = JSON.parse(localStorage.getItem("user"));
