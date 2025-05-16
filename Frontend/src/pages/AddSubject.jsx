@@ -11,10 +11,10 @@ function AddSubject() {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const token = localStorage.getItem('token');
   const [form, setForm] = useState({
-    name: '', code: '', department: '', year: '', semester: '', type: ''
+    name: '', code: '', department: '', year: '', semester: ''
   });
   const [department, setDepartment] = useState("");
-  const [groupedSubjects, setGroupedSubjects] = useState({});
+  const [subjectsBySemester, setSubjectsBySemester] = useState({});
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -53,9 +53,10 @@ function AddSubject() {
         // Group by semester
         const grouped = {};
         for (let i = 1; i <= 8; i++) {
-          grouped[i] = subjects.filter((subj) => parseInt(subj.semester) === i);
+          grouped[i] = subjects.filter((s) => s.semester.trim() === i.toString());
         }
-        setGroupedSubjects(grouped);
+        console.log("Grouped Subjects:", grouped);
+        setSubjectsBySemester(grouped);
       } else {
         toast.error(res.data.message);
       }
@@ -141,7 +142,9 @@ function AddSubject() {
                     <option value="IT">IT</option>
                     <option value="Other">Other</option>
                   </select>
-                  <label className="font-bold">Year:</label>
+                </div>
+                <div className="flex flex-col">
+                <label className="font-bold">Year:</label>
 <select
   id="year"
   value={form.year}
@@ -153,20 +156,6 @@ function AddSubject() {
   <option value="2nd">2nd</option>
   <option value="3rd">3rd</option>
   <option value="4th">4th</option>
-</select>
-                </div>
-                <div className="flex flex-col">
-                <label className="font-bold">Section:</label>
-<select
-  id="section"
-  value={form.section}
-  onChange={handleChange}
-  className="outline-none mb-4 border"
->
-  <option value="">--Select Section--</option>
-  <option value="A">A</option>
-  <option value="B">B</option>
-  <option value="C">C</option>
 </select>
                 <label className="font-bold">Semester:</label>
  <select
@@ -184,18 +173,6 @@ function AddSubject() {
   <option value="6">6</option>
   <option value="7">7</option>
   <option value="8">8</option>
-</select>
-<label className="font-bold">Type:</label>
-<select
-id="type"
-  name="type"
-  value={form.type}
-  onChange={handleChange}
-  className="outline-none mb-4 border"
->
-  <option value="">Select Type</option>
-  <option value="Theory">Theory</option>
-  <option value="Practical">Practical</option>
 </select>
                 </div>
               </div>
@@ -233,8 +210,8 @@ id="type"
                </button>
              </div>
        
-             {Object.entries(groupedSubjects).map(([sem, subjects]) => (
-               subjects.length.length > 0 && (
+             {Object.entries(subjectsBySemester).map(([sem, subjects]) => (
+               subjects.length > 0 && (
                  <div key={sem} className="mb-10">
                    <h2 className="text-lg font-semibold text-blue-600 mb-2">Semester {sem}</h2>
                    <table className="w-full border border-collapse">
