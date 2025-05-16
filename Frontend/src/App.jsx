@@ -17,6 +17,7 @@ import { TeacherList } from "./pages/TeacherList";
 import { StudentList } from "./pages/StudentList";
 import AddSubject from "./pages/AddSubject";
 import { FacultyDashboard } from "./pages/FacultyDashboard";
+import { Department } from "./pages/department";
 
 const ProtectedRoute = ({ element, role }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -84,6 +85,8 @@ function App() {
             path="/report"
             element={<ProtectedRoute element={<Report />} />}
           />
+          <Route path="/department" element={<Department />} />
+          <Route path="/teacherList" element={<TeacherList />} />
           <Route path="/teacherList" element={<TeacherList />} />
         <Route path="/studentList" element={<StudentList />} />
         </Route>
