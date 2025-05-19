@@ -21,7 +21,7 @@ const attendanceSchema = new mongoose.Schema({
   department: { type: String, required: true },
   year: { type: String, required: true },
   section: { type: String, required: true },
-  subject: { type: String, required: true },
+  subject: { type: String },
   date: { type: Date, required: true },
   students: [studentAttendanceSchema],
   facultyId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
