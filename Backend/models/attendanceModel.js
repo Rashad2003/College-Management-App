@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const periodSchema = new mongoose.Schema({
   periodNumber: Number,
+  subject: String,
   status: { type: String, enum: ["Present", "Absent", "Late"], default: "Present" },
 });
 
@@ -12,6 +13,7 @@ const studentAttendanceSchema = new mongoose.Schema({
   department: { type: String },
   year: { type: String },
   section: { type: String },
+  subject: { type: String },
   periods: [periodSchema],
 });
 
@@ -19,6 +21,7 @@ const attendanceSchema = new mongoose.Schema({
   department: { type: String, required: true },
   year: { type: String, required: true },
   section: { type: String, required: true },
+  subject: { type: String, required: true },
   date: { type: Date, required: true },
   students: [studentAttendanceSchema],
   facultyId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

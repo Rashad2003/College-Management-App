@@ -69,9 +69,17 @@ export const Report = () => {
 
   const handlePrint = () => {
     const doc = new jsPDF();
-    doc.text("Class Attendance Report", 14, 16);
+    doc.setFontSize(13);
+doc.text("C.ABDUL HAKEEM COLLEGE OF ENGINEERING AND TECHNOLOGY", 55, 20);
+doc.text("MELVISHARAM - 632509", 100, 28);
+doc.text("DEPARTMENT OF INFORMATION TECHNOLOGY", 75, 36);
+doc.text("ACADEMIC YEAR 2024 - 2025", 95, 44);
+doc.addImage("examples/images/Octonyan.jpg", "JPEG",15, 10, 30, 30);
+doc.setLineWidth(1);
+doc.line(300, 50, 0, 50);
+doc.text("CLASS ATTENDANCE REPORT", 75, 60);
     autoTable(doc, {
-      startY: 20,
+      startY: 70,
       head: [["No", "Name", "Reg No", "Department", "Year", "Section", "Total", "Present", "Absent", "%"]],
       body: reportData.map((entry, i) => [
         i + 1,

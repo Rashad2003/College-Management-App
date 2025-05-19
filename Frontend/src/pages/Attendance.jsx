@@ -10,6 +10,8 @@ export const Attendance = () => {
     department: "",
     year: "",
     section: "",
+    semester: "",
+    subject: "",
     date: "",
   });
 
@@ -18,12 +20,38 @@ export const Attendance = () => {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("token");
+const [subjects, setSubjects] = useState([]);
 
   useEffect(() => {
     if (formData.department && formData.year && formData.section && formData.date) {
       fetchAttendanceData();
     }
   }, [formData.department, formData.year, formData.section, formData.date]);
+
+  useEffect(() => {
+    if (formData.department && formData.year && formData.semester) {
+    fetchSubjects();
+    } else {
+      setSubjects([]);
+    }
+  }, [formData.department, formData.year, formData.semester]);
+
+  const fetchSubjects = async () => {
+      try {
+        const response = await axios.get(backendUrl + "/api/subject/list", {
+          params: {
+            department:formData.department,
+            year:formData.year,
+            semester:formData.semester,
+          },
+        });
+        setSubjects(response.data);
+      } catch (error) {
+        console.error("Error fetching subjects:", error);
+        setSubjects([]);
+      }
+  };
+  
 
   const fetchAttendanceData = async () => {
     try {
@@ -99,13 +127,7 @@ export const Attendance = () => {
       year: formData.year,
       section: formData.section,
       date: formData.date,
-      // students: Object.entries(attendance).map(([id, periods]) => ({
-      //   studentId: id,
-      //   periods: periods.map((status, i) => ({
-      //     periodNumber: i + 1,
-      //     status,
-      //   })),
-      // })),
+      subject: formData.subject,
       students: Object.entries(attendance).map(([id, periods]) => {
         const student = students.find((s) => s._id === id);
         return {
@@ -114,6 +136,7 @@ export const Attendance = () => {
           register: student?.register || "",
           periods: periods.map((status, i) => ({
             periodNumber: i + 1,
+            subject: formData.subject,
             status,
           })),
         };
@@ -220,6 +243,31 @@ export const Attendance = () => {
   <option value="3rd">3rd</option>
   <option value="4th">4th</option>
           </select>
+        </div>
+        <div>
+        <label className="block mb-1 font-semibold">Semester</label>
+        <select value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })} className="border px-4 py-2 rounded">
+  <option value="">Select Semester</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="6">6</option>
+  <option value="7">7</option>
+  <option value="8">8</option>
+</select>
+        </div>
+        <div>
+        <label className="block mb-1 font-semibold">Subjects</label>
+        <select value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="border px-4 py-2 rounded">
+  <option value="">Select Subject</option>
+  {subjects.map(subject => (
+    <option key={subject._id} value={subject.name}>
+      {subject.name}
+    </option>
+  ))}
+</select>
         </div>
         <div>
           <label className="block mb-1 font-semibold">Section</label>

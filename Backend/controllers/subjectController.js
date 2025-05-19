@@ -12,15 +12,9 @@ export const getAllSubjects = async (req, res) => {
   }
 
   export const listSubject = async (req, res) => {
+    const { department, year, semester } = req.query;
     try {
-      const { department, year, semester } = req.query;
-      const query = {};
-  
-      if (department) query.department = department;
-      if (year) query.year = year;
-      if (semester) query.semester = semester;
-  
-      const subjects = await Subject.find(query);
+      const subjects = await Subject.find({ department, year, semester });
       res.json(subjects);
     } catch (error) {
       res.status(500).json({ error: 'Failed to fetch subjects' });
