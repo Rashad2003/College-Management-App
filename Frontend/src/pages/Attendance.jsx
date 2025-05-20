@@ -155,14 +155,12 @@ const [subjects, setSubjects] = useState([]);
     section: formData.section,
     semester: formData.semester,
     date: formData.date,
-    subject: formData.subject,
     students: Object.entries(attendance).map(([id, status]) => {
       const student = students.find((s) => s._id === id);
       return {
         studentId: id,
         name: student?.name || "",
         register: student?.register || "",
-        subject: formData.subject,
         periods: [
           {
             periodNumber: formData.period,
