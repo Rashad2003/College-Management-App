@@ -40,7 +40,7 @@ export const markAttendance = async (req, res) => {
           department,
           year,
           section,
-          periods: [{ periodNumber, subject, status }],
+          periods: [{ periodNumber: period, subject, status }],
         });
       } else {
         const periodIndex = existingStudent.periods.findIndex(
@@ -53,7 +53,7 @@ export const markAttendance = async (req, res) => {
         } else {
           // Add new period
           existingStudent.periods.push({
-            periodNumber,
+            periodNumber: period,
             subject,
             status,
           });
