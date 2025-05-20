@@ -42,7 +42,7 @@ export const markAttendance = async (req, res) => {
           year,
           section,
           periods: [{
-            periodNumber: period.toString(),
+            periodNumber: String(period),
             subject,
             status,
           }],
@@ -56,7 +56,7 @@ export const markAttendance = async (req, res) => {
           existingStudent.periods[periodIndex].status = status;
         } else {
           existingStudent.periods.push({
-            periodNumber: period.toString(),
+            periodNumber: String(period),
             subject,
             status,
           });
