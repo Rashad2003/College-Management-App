@@ -3,25 +3,78 @@ import Student from "../models/studentModel.js";
 import { sendSMS } from "../smsSender.js"; 
 
 export const markAttendance = async (req, res) => {
-  const { department, year, section, semester, subject, date, students } = req.body;
+  const { department, year, section, semester, subject, date, period, students } = req.body;
 
   try {
-    const existing = await Attendance.findOne({ department, year, section, semester, subject, date });
+    let attendanceDoc = await Attendance.findOne({
+      department,
+      year,
+      section,
+      date: {
+        $gte: new Date(date),
+        $lt: new Date(date).setHours(23, 59, 59, 999),
+      },
+      subject,
+    });
 
-    if (existing) {
-      existing.students = students;
-      await existing.save();
-      return res.json({ success: true, message: "Attendance updated" });
+    if (!attendanceDoc) {
+      // If no document exists, create a new one
+      attendanceDoc = new Attendance({
+        department,
+        year,
+        section,
+        semester,
+        subject,
+        date,
+        facultyId: req.user?.id || null,
+        students: [],
+      });
     }
 
-    const newAttendance = new Attendance({ department, year, section, subject, semester, date, students, facultyId: req.user?.id || null });
-    await newAttendance.save();
-    res.status(201).json({ success: true, message: "Attendance recorded" });
+    // Update or add each student's period entry
+    students.forEach(({ studentId, name, register, status }) => {
+      let existingStudent = attendanceDoc.students.find(
+        (s) => s.studentId.toString() === studentId
+      );
+
+      if (!existingStudent) {
+        attendanceDoc.students.push({
+          studentId,
+          name,
+          register,
+          department,
+          year,
+          section,
+          subject,
+          periods: [{ periodNumber: Number(period), subject, status }],
+        });
+      } else {
+        const periodIndex = existingStudent.periods.findIndex(
+          (p) => p.periodNumber === Number(period)
+        );
+
+        if (periodIndex !== -1) {
+          // Update existing period
+          existingStudent.periods[periodIndex].status = status;
+        } else {
+          // Add new period
+          existingStudent.periods.push({
+            periodNumber: Number(period),
+            subject,
+            status,
+          });
+        }
+      }
+    });
+
+    await attendanceDoc.save();
+    return res.status(200).json({ success: true, message: "Attendance saved." });
   } catch (err) {
     console.error("Mark Attendance Error:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 export const viewAttendance = async (req, res) => {
   const { department, year, section, date } = req.query;
@@ -190,12 +243,44 @@ export const getStudentReport = async (req, res) => {
 
 
 export const fetchAttendance = async (req, res) => {
-  const { department, year, section, date } = req.query;
-  const record = await Attendance.findOne({ department, year, section, date });
+  const { department, year, section, date, subject, period } = req.query;
 
-  if (!record) {
-    return res.json({ exists: false });
+  try {
+    const record = await Attendance.findOne({
+      department,
+      year,
+      section,
+      date: {
+        $gte: new Date(date),
+        $lt: new Date(date).setHours(23, 59, 59, 999),
+      },
+      subject,
+    });
+
+    if (!record) {
+      return res.json({ exists: false });
+    }
+
+    const filteredStudents = record.students
+      .map((student) => {
+        const periodData = student.periods.find(
+          (p) => p.periodNumber === Number(period)
+        );
+        if (periodData) {
+          return {
+            studentId: student.studentId,
+            name: student.name,
+            register: student.register,
+            status: periodData.status,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean);
+
+    return res.json({ exists: true, students: filteredStudents });
+  } catch (err) {
+    console.error("Fetch Attendance Error:", err);
+    return res.status(500).json({ success: false, message: "Server Error" });
   }
-
-  res.json({ exists: true, attendance: record });
 };
