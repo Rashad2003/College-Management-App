@@ -3,10 +3,10 @@ import Student from "../models/studentModel.js";
 import { sendSMS } from "../smsSender.js"; 
 
 export const markAttendance = async (req, res) => {
-  const { department, year, section, date, students } = req.body;
+  const { department, year, section, semester, subject, date, students } = req.body;
 
   try {
-    const existing = await Attendance.findOne({ department, year, section, date });
+    const existing = await Attendance.findOne({ department, year, section, semester, subject, date });
 
     if (existing) {
       existing.students = students;
@@ -14,7 +14,7 @@ export const markAttendance = async (req, res) => {
       return res.json({ success: true, message: "Attendance updated" });
     }
 
-    const newAttendance = new Attendance({ department, year, section, date, students, facultyId: req.user?.id || null });
+    const newAttendance = new Attendance({ department, year, section, subject, semester, date, students, facultyId: req.user?.id || null });
     await newAttendance.save();
     res.status(201).json({ success: true, message: "Attendance recorded" });
   } catch (err) {

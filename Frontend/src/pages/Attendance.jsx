@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 
 export const Attendance = () => {
   const { backendUrl } = useContext(StoreContext);
+  const [currentPage, setCurrentPage] = useState("Mark Attendance");
   const [students, setStudents] = useState([]);
   const [formData, setFormData] = useState({
     department: "",
@@ -12,6 +13,7 @@ export const Attendance = () => {
     section: "",
     semester: "",
     subject: "",
+    period: "",
     date: "",
   });
 
@@ -69,7 +71,10 @@ const [subjects, setSubjects] = useState([]);
       if (res.data.exists) {
         const saved = {};
         res.data.attendance.students.forEach((record) => {
-          saved[record.studentId] = record.periods.map((p) => p.status);
+          const periodRecord = record.periods.find(
+            (p) => p.periodNumber === Number(formData.period)
+          );
+          saved[record.studentId] = periodRecord ? periodRecord.status : "Present";
         });
         setAttendance(saved);
         setStudents(res.data.attendance.students.map((s) => ({
@@ -102,7 +107,7 @@ const [subjects, setSubjects] = useState([]);
       setStudents(filtered);
       const initial = {};
       filtered.forEach((s) => {
-        initial[s._id] = Array(8).fill("Present");
+        initial[s._id] = "Present";
       });
       setAttendance(initial);
     } catch (error) {
@@ -111,37 +116,62 @@ const [subjects, setSubjects] = useState([]);
     }
   };
 
-  const handlePeriodChange = (studentId, periodIndex, value) => {
+  const handlePeriodChange = (studentId, value) => {
     setAttendance((prev) => ({
       ...prev,
-      [studentId]: prev[studentId].map((val, i) =>
-        i === periodIndex ? value : val
-      ),
+      // [studentId]: prev[studentId].map((val, i) =>
+      //   i === periodIndex ? value : val
+      // ),
+      [studentId]: value,
     }));
   };
 
   const handleSubmit = async () => {
 
-    const payload = {
-      department: formData.department,
-      year: formData.year,
-      section: formData.section,
-      date: formData.date,
-      subject: formData.subject,
-      students: Object.entries(attendance).map(([id, periods]) => {
-        const student = students.find((s) => s._id === id);
-        return {
-          studentId: id,
-          name: student?.name || "",
-          register: student?.register || "",
-          periods: periods.map((status, i) => ({
-            periodNumber: i + 1,
+    // const payload = {
+    //   department: formData.department,
+    //   year: formData.year,
+    //   section: formData.section,
+    //   semester: formData.semester,
+    //   date: formData.date,
+    //   subject: formData.subject,
+    //   period: formData.period,
+    //   students: selectedStudent ? selectedStudent.map(student => ({
+    //       studentId: student._id,
+    //       name: student?.name || "",
+    //       register: student?.register || "",
+    //       periods: student.statusArray.map((status, i) => ({
+    //         periodNumber: i + 1,
+    //         period: formData.period,
+    //         subject: formData.subject,
+    //         status,
+    //       })),
+    //     })) : [],
+    //   }
+      const payload = {
+    department: formData.department,
+    year: formData.year,
+    section: formData.section,
+    semester: formData.semester,
+    date: formData.date,
+    subject: formData.subject,
+    students: Object.entries(attendance).map(([id, status]) => {
+      const student = students.find((s) => s._id === id);
+      return {
+        studentId: id,
+        name: student?.name || "",
+        register: student?.register || "",
+        subject: formData.subject,
+        periods: [
+          {
+            periodNumber: Number(formData.period),
             subject: formData.subject,
             status,
-          })),
-        };
-      }),
-    };
+          }
+        ]
+      };
+    }),
+  };
     console.log("Submitting attendance payload:", payload);
 
     try {
@@ -207,12 +237,35 @@ const [subjects, setSubjects] = useState([]);
       toast.error("Something went wrong while sending the message.");
     }
   };
-  
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <h2 className="text-lg md:text-2xl font-bold text-purple-800 mb-6 ">Mark Attendance</h2>
+      <div className="flex justify-center gap-4 mb-8">
+        <button
+          onClick={() => setCurrentPage("Mark Attendance")}
+          className={`px-6 py-2 rounded-lg ${
+            currentPage === "Mark Attendance"
+              ? "bg-purple-900 text-white"
+              : "bg-white text-black border"
+          }`}
+        >
+          Mark Attendance
+        </button>
+        <button
+          onClick={() => setCurrentPage("View Attendance")}
+          className={`px-6 py-2 rounded-lg ${
+            currentPage === "View Attendance"
+              ? "bg-purple-900 text-white"
+              : "bg-white text-black border"
+          }`}
+        >
+          View Attendance
+        </button>
+      </div>
 
+      {currentPage === "Mark Attendance" && (
+        <>
+      <h2 className="text-lg md:text-2xl font-bold text-purple-800 mb-6 ">Mark Attendance</h2>
       <div className="flex gap-6 mb-6 flex-wrap">
         <div>
           <label className="block mb-1 font-semibold">Department</label>
@@ -285,6 +338,20 @@ const [subjects, setSubjects] = useState([]);
           </select>
         </div>
         <div>
+        <label className="block mb-1 font-semibold">Period</label>
+        <select value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} className="border px-4 py-2 rounded">
+  <option value="">Select Period</option>
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+  <option value="5">5</option>
+  <option value="6">6</option>
+  <option value="7">7</option>
+  <option value="8">8</option>
+</select>
+        </div>
+        <div>
           <label className="block mb-1 font-semibold">Date</label>
           <input
             type="date"
@@ -304,9 +371,7 @@ const [subjects, setSubjects] = useState([]);
               <tr className="bg-purple-100 text-center">
                 <th className="border p-2">Name</th>
                 <th className="border p-2">Register No</th>
-                {[...Array(8)].map((_, i) => (
-                  <th key={i} className="border p-2">{`Class ${i + 1}`}</th>
-                ))}
+                <th className="border p-2">{`Period ${formData.period}`}</th>
                 <th className="border p-2">Action</th>
               </tr>
             </thead>
@@ -315,7 +380,27 @@ const [subjects, setSubjects] = useState([]);
                 <tr key={student._id} className="text-center">
                   <td className="border p-2">{student.name}</td>
                   <td className="border p-2">{student.register}</td>
-                  {[...Array(8)].map((_, i) => (
+                  <td className="border p-2">
+                  <select
+  value={attendance[student._id] || "Present"}
+  onChange={(e) => handlePeriodChange(student._id, e.target.value)}
+  className="appearance-none w-6 h-6 rounded-full cursor-pointer border-none focus:outline-none"
+  style={{
+    backgroundColor:
+      attendance[student._id] === "Present"
+        ? "#4ade80"
+        : attendance[student._id] === "Absent"
+        ? "#f87171"
+        : "#facc15",
+  }}
+>
+  <option value="Present" className="bg-green-400 text-center text-bold">P</option>
+  <option value="Absent" className="bg-red-400 text-center text-bold">A</option>
+  <option value="Late" className="bg-yellow-400 text-center text-bold">L</option>
+</select>
+
+                </td>
+                  {/* {[...Array(8)].map((_, i) => (
                     <td key={i} className="border p-2">
                       <div className="flex justify-center">
                         <select
@@ -339,7 +424,7 @@ const [subjects, setSubjects] = useState([]);
                         </select>
                       </div>
                     </td>
-                  ))}
+                  ))} */}
                   <td className="border p-2">
                     <button
                       className="bg-blue-600 text-white px-2 py-1 rounded"
@@ -394,6 +479,145 @@ const [subjects, setSubjects] = useState([]);
             </div>
           </div>
         </div>
+      )}
+      </>
+      )}
+      {currentPage === "View Attendance" && (
+          <>
+          <h2 className="text-lg md:text-2xl font-bold text-purple-800 mb-6 ">View Attendance</h2>
+          <div className="flex gap-6 mb-6 flex-wrap">
+            <div>
+              <label className="block mb-1 font-semibold">Department</label>
+              <select
+                value={formData.department}
+                onChange={(e) =>
+                  setFormData({ ...formData, department: e.target.value })
+                }
+                className="border px-4 py-2 rounded"
+              >
+                <option value="">--Select--</option>
+                <option value="IT">IT</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold">Year</label>
+              <select
+                value={formData.year}
+                onChange={(e) =>
+                  setFormData({ ...formData, year: e.target.value })
+                }
+                className="border px-4 py-2 rounded"
+              >
+                <option value="">--Select--</option>
+                <option value="1st">1st</option>
+      <option value="2nd">2nd</option>
+      <option value="3rd">3rd</option>
+      <option value="4th">4th</option>
+              </select>
+            </div>
+            <div>
+            <label className="block mb-1 font-semibold">Semester</label>
+            <select value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: e.target.value })} className="border px-4 py-2 rounded">
+      <option value="">Select Semester</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+    </select>
+            </div>
+            <div>
+            <label className="block mb-1 font-semibold">Subject</label>
+            <select value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="border px-4 py-2 rounded">
+      <option value="">Select Subject</option>
+      {subjects.map(subj => (
+        <option key={subj._id} value={subj.name}>
+          {subj.name}
+        </option>
+      ))}
+    </select>
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold">Section</label>
+              <select
+                value={formData.section}
+                onChange={(e) =>
+                  setFormData({ ...formData, section: e.target.value })
+                }
+                className="border px-4 py-2 rounded"
+              >
+      <option value="">--Select Section--</option>
+      <option value="A">A</option>
+      <option value="B">B</option>
+      <option value="C">C</option>
+              </select>
+            </div>
+            <div>
+              <label className="block mb-1 font-semibold">Date</label>
+              <input
+                type="date"
+                value={formData.date}
+                onChange={(e) =>
+                  setFormData({ ...formData, date: e.target.value })
+                }
+                className="border px-4 py-2 rounded"
+              />
+            </div>
+          </div>
+    
+          {students.length > 0 && (
+            <div className="overflow-auto w-[75vw]">
+              <table className="w-full border text-sm">
+                <thead>
+                  <tr className="bg-purple-100 text-center">
+                    <th className="border p-2">Name</th>
+                    <th className="border p-2">Register No</th>
+                    {[...Array(8)].map((_, i) => (
+                      <th key={i} className="border p-2">{`Period ${i + 1}`}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {students.map((student) => (
+                    <tr key={student._id} className="text-center">
+                      <td className="border p-2">{student.name}</td>
+                      <td className="border p-2">{student.register}</td>
+                      {[...Array(8)].map((_, i) => (
+                        <td key={i} className="border p-2">
+                          <div className="flex justify-center">
+                            <select
+                              value={attendance[student._id]?.[i] || "Present"}
+                              onChange={(e) =>
+                                handlePeriodChange(student._id, i, e.target.value)
+                              }
+                              className="appearance-none w-6 h-6 rounded-full cursor-pointer border-none focus:outline-none"
+                              style={{
+                                backgroundColor:
+                                  attendance[student._id]?.[i] === "Present"
+                                    ? "#4ade80"
+                                    : attendance[student._id]?.[i] === "Absent"
+                                    ? "#f87171"
+                                    : "#facc15",
+                              }} disabled
+                            >
+                              <option value="Present" className="bg-green-400 text-center text-bold">P</option>
+                              <option value="Absent" className="bg-red-400 text-center text-bold">A</option>
+                              <option value="Late" className="bg-yellow-400 text-center text-bold">L</option>
+                            </select>
+                          </div>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          </>
       )}
     </div>
   );
