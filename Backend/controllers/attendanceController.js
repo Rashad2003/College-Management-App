@@ -29,6 +29,7 @@ export const markAttendance = async (req, res) => {
     }
 
     students.forEach(({ studentId, name, register, status }) => {
+      const periodNumber = String(period);
       let existingStudent = attendanceDoc.students.find(
         (s) => s.studentId.toString() === studentId
       );
@@ -42,21 +43,21 @@ export const markAttendance = async (req, res) => {
           year,
           section,
           periods: [{
-            periodNumber: String(period),
+            periodNumber,
             subject,
             status,
           }],
         });
       } else {
         const periodIndex = existingStudent.periods.findIndex(
-          (p) => p.periodNumber === period.toString()
+          (p) => p.periodNumber === periodNumber
         );
 
         if (periodIndex !== -1) {
           existingStudent.periods[periodIndex].status = status;
         } else {
           existingStudent.periods.push({
-            periodNumber: String(period),
+            periodNumber,
             subject,
             status,
           });
