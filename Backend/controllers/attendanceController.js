@@ -10,10 +10,7 @@ export const markAttendance = async (req, res) => {
       department,
       year,
       section,
-      date: {
-        $gte: new Date(date),
-        $lt: new Date(date).setHours(23, 59, 59, 999),
-      },
+      date,
       subject,
     });
 
@@ -46,11 +43,11 @@ export const markAttendance = async (req, res) => {
           year,
           section,
           subject,
-          periods: [{ periodNumber: Number(period), subject, status }],
+          periods: [{ periodNumber: period, subject, status }],
         });
       } else {
         const periodIndex = existingStudent.periods.findIndex(
-          (p) => p.periodNumber === Number(period)
+          (p) => p.periodNumber === period
         );
 
         if (periodIndex !== -1) {
@@ -59,7 +56,7 @@ export const markAttendance = async (req, res) => {
         } else {
           // Add new period
           existingStudent.periods.push({
-            periodNumber: Number(period),
+            periodNumber: period,
             subject,
             status,
           });

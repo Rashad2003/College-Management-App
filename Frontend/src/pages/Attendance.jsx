@@ -117,6 +117,7 @@ const [subjects, setSubjects] = useState([]);
   };
 
   const handlePeriodChange = (studentId, value) => {
+    console.log("Changed status:", studentId, value); 
     setAttendance((prev) => ({
       ...prev,
       // [studentId]: prev[studentId].map((val, i) =>
@@ -164,9 +165,9 @@ const [subjects, setSubjects] = useState([]);
         subject: formData.subject,
         periods: [
           {
-            periodNumber: Number(formData.period),
+            periodNumber: formData.period,
             subject: formData.subject,
-            status,
+            status: status,
           }
         ]
       };
