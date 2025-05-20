@@ -96,7 +96,7 @@ const [subjects, setSubjects] = useState([]);
       const res = await axios.get(`${backendUrl}/api/student/list`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(res.data.students);
+      console.log(res);
       const filtered = res.data.students.filter(
         (s) =>
           s.department.toLowerCase() === formData.department.toLowerCase() &&
@@ -340,7 +340,7 @@ const [subjects, setSubjects] = useState([]);
         <div>
         <label className="block mb-1 font-semibold">Period</label>
         <select value={formData.period} onChange={(e) => setFormData({ ...formData, period: e.target.value })} className="border px-4 py-2 rounded">
-  <option value="">Select Period</option>
+ <option value="">Select Period</option>
   <option value="1">1</option>
   <option value="2">2</option>
   <option value="3">3</option>
@@ -349,6 +349,11 @@ const [subjects, setSubjects] = useState([]);
   <option value="6">6</option>
   <option value="7">7</option>
   <option value="8">8</option>
+  {/* {[...Array(8)].map((_, i) => (
+    <option key={i + 1} value={i + 1}>
+      {i + 1}
+    </option>
+  ))} */}
 </select>
         </div>
         <div>

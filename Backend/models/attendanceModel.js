@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const periodSchema = new mongoose.Schema({
-  periodNumber: Number,
+  periodNumber: String,
   subject: String,
   status: { type: String, enum: ["Present", "Absent", "Late"], default: "Present" },
 });
