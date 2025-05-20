@@ -3,13 +3,14 @@ import Student from "../models/studentModel.js";
 import { sendSMS } from "../smsSender.js"; 
 
 export const markAttendance = async (req, res) => {
-  const { department, year, section, semester, subject, date, period, students } = req.body;
+  const { department, year, section, semester, date, period, subject, students } = req.body;
 
   try {
     let attendanceDoc = await Attendance.findOne({
       department,
       year,
       section,
+      semester,
       date: {
         $gte: new Date(date),
         $lt: new Date(date).setHours(23, 59, 59, 999),
@@ -29,7 +30,6 @@ export const markAttendance = async (req, res) => {
     }
 
     students.forEach(({ studentId, name, register, status }) => {
-      const periodNumber = String(period);
       let existingStudent = attendanceDoc.students.find(
         (s) => s.studentId.toString() === studentId
       );
@@ -43,21 +43,21 @@ export const markAttendance = async (req, res) => {
           year,
           section,
           periods: [{
-            periodNumber,
+            periodNumber: String(period),
             subject,
             status,
           }],
         });
       } else {
         const periodIndex = existingStudent.periods.findIndex(
-          (p) => p.periodNumber === periodNumber
+          (p) => p.periodNumber === String(period)
         );
 
         if (periodIndex !== -1) {
           existingStudent.periods[periodIndex].status = status;
         } else {
           existingStudent.periods.push({
-            periodNumber,
+            periodNumber: String(period),
             subject,
             status,
           });
@@ -67,11 +67,13 @@ export const markAttendance = async (req, res) => {
 
     await attendanceDoc.save();
     return res.status(200).json({ success: true, message: "Attendance saved." });
+
   } catch (err) {
     console.error("Mark Attendance Error:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 export const viewAttendance = async (req, res) => {
   const { department, year, section, date } = req.query;
@@ -251,7 +253,6 @@ export const fetchAttendance = async (req, res) => {
         $gte: new Date(date),
         $lt: new Date(date).setHours(23, 59, 59, 999),
       },
-      subject,
     });
 
     if (!record) {
@@ -261,7 +262,7 @@ export const fetchAttendance = async (req, res) => {
     const filteredStudents = record.students
       .map((student) => {
         const periodData = student.periods.find(
-          (p) => p.periodNumber === Number(period)
+          (p) => p.periodNumber === String(period)
         );
         if (periodData) {
           return {
