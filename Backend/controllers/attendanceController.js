@@ -10,11 +10,13 @@ export const markAttendance = async (req, res) => {
       department,
       year,
       section,
-      date,
+      date: {
+        $gte: new Date(date),
+        $lt: new Date(date).setHours(23, 59, 59, 999),
+      },
     });
 
     if (!attendanceDoc) {
-      // If no document exists, create a new one
       attendanceDoc = new Attendance({
         department,
         year,
@@ -26,7 +28,6 @@ export const markAttendance = async (req, res) => {
       });
     }
 
-    // Update or add each student's period entry
     students.forEach(({ studentId, name, register, status }) => {
       let existingStudent = attendanceDoc.students.find(
         (s) => s.studentId.toString() === studentId
@@ -40,20 +41,22 @@ export const markAttendance = async (req, res) => {
           department,
           year,
           section,
-          periods: [{ periodNumber: period, subject, status }],
+          periods: [{
+            periodNumber: period.toString(),
+            subject,
+            status,
+          }],
         });
       } else {
         const periodIndex = existingStudent.periods.findIndex(
-          (p) => p.periodNumber === period
+          (p) => p.periodNumber === period.toString()
         );
 
         if (periodIndex !== -1) {
-          // Update existing period
           existingStudent.periods[periodIndex].status = status;
         } else {
-          // Add new period
           existingStudent.periods.push({
-            periodNumber: period,
+            periodNumber: period.toString(),
             subject,
             status,
           });
@@ -68,7 +71,6 @@ export const markAttendance = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
 
 export const viewAttendance = async (req, res) => {
   const { department, year, section, date } = req.query;
