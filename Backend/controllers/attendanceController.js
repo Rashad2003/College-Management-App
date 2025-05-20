@@ -21,7 +21,6 @@ export const markAttendance = async (req, res) => {
         year,
         section,
         semester,
-        subject,
         date,
         facultyId: req.user?.id || null,
         students: [],
@@ -42,7 +41,6 @@ export const markAttendance = async (req, res) => {
           department,
           year,
           section,
-          subject,
           periods: [{ periodNumber: period, subject, status }],
         });
       } else {
