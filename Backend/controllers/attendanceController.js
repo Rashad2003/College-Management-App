@@ -6,14 +6,18 @@ export const markAttendance = async (req, res) => {
   const { department, year, section, semester, date, students } = req.body;
 
   try {
+    const attendanceDate = new Date(date);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
     let attendanceDoc = await Attendance.findOne({
       department,
       year,
       section,
       semester,
       date: {
-        $gte: new Date(date),
-        $lt: new Date(date).setHours(23, 59, 59, 999),
+        $gte: attendanceDate,
+        $lt: endOfDay,
       },
     });
 
@@ -34,6 +38,12 @@ export const markAttendance = async (req, res) => {
         (s) => s.studentId.toString() === studentId
       );
 
+      const formattedPeriods = periods.map(({ periodNumber, subject, status }) => ({
+        periodNumber: String(periodNumber),
+        subject: subject || "", // Ensure subject is passed here
+        status: status || "Present",
+      }));
+
       if (!existingStudent) {
         attendanceDoc.students.push({
           studentId,
@@ -42,39 +52,33 @@ export const markAttendance = async (req, res) => {
           department,
           year,
           section,
-          periods: periods.map(p => ({
-            periodNumber: String(p.periodNumber),
-            subject: p.subject,
-            status: p.status
-          })),
+          periods: formattedPeriods,
         });
       } else {
-        periods.forEach((periodObj) => {
+        formattedPeriods.forEach(({ periodNumber, subject, status }) => {
           const existingPeriod = existingStudent.periods.find(
-            (p) => p.periodNumber === String(periodObj.periodNumber)
+            (p) => p.periodNumber === String(periodNumber)
           );
 
           if (existingPeriod) {
-            existingPeriod.status = periodObj.status;
-            existingPeriod.subject = periodObj.subject;
+            existingPeriod.status = status;
+            existingPeriod.subject = subject;
           } else {
-            existingStudent.periods.push({
-              periodNumber: String(periodObj.periodNumber),
-              subject: periodObj.subject,
-              status: periodObj.status,
-            });
+            existingStudent.periods.push({ periodNumber, subject, status });
           }
         });
       }
     });
 
     await attendanceDoc.save();
-    return res.status(200).json({ success: true, message: "Attendance saved.", updated: true });
+    return res.status(200).json({ success: true, message: "Attendance saved/updated successfully." });
+
   } catch (err) {
     console.error("Mark Attendance Error:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 
 

@@ -128,46 +128,23 @@ const [subjects, setSubjects] = useState([]);
   };
 
   const handleSubmit = async () => {
-
-    // const payload = {
-    //   department: formData.department,
-    //   year: formData.year,
-    //   section: formData.section,
-    //   semester: formData.semester,
-    //   date: formData.date,
-    //   subject: formData.subject,
-    //   period: formData.period,
-    //   students: selectedStudent ? selectedStudent.map(student => ({
-    //       studentId: student._id,
-    //       name: student?.name || "",
-    //       register: student?.register || "",
-    //       periods: student.statusArray.map((status, i) => ({
-    //         periodNumber: i + 1,
-    //         period: formData.period,
-    //         subject: formData.subject,
-    //         status,
-    //       })),
-    //     })) : [],
-    //   }
       const payload = {
     department: formData.department,
     year: formData.year,
     section: formData.section,
     semester: formData.semester,
     date: formData.date,
-    students: Object.entries(attendance).map(([id, status]) => {
+    students: Object.entries(attendance).map(([id, periodStatusMap]) => {
       const student = students.find((s) => s._id === id);
       return {
         studentId: id,
         name: student?.name || "",
         register: student?.register || "",
-        periods: [
-          {
-            periodNumber: formData.period,
-            subject: formData.subject,
-            status: status,
-          }
-        ]
+        periods: [...Array(8)].map((_, i) => ({
+          periodNumber: String(i + 1),
+          subject: formData.subject,
+          status: periodStatusMap[i] || "Present",
+        })),
       };
     }),
   };
