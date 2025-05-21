@@ -1,9 +1,9 @@
 import Attendance from "../models/attendanceModel.js";
 import Student from "../models/studentModel.js";
-import { sendSMS } from "../smsSender.js"; 
+import { sendSMS } from "../smsSender.js";
 
 export const markAttendance = async (req, res) => {
-  const { department, year, section, semester, date, period, subject, students } = req.body;
+  const { department, year, section, semester, date, students } = req.body;
 
   try {
     let attendanceDoc = await Attendance.findOne({
@@ -11,9 +11,10 @@ export const markAttendance = async (req, res) => {
       year,
       section,
       semester,
-      date,
-      facultyId: req.user?.id || null,
-      students: [],
+      date: {
+        $gte: new Date(date),
+        $lt: new Date(date).setHours(23, 59, 59, 999),
+      },
     });
 
     if (!attendanceDoc) {
@@ -28,7 +29,7 @@ export const markAttendance = async (req, res) => {
       });
     }
 
-    students.forEach(({ studentId, name, register, status }) => {
+    students.forEach(({ studentId, name, register, periods }) => {
       let existingStudent = attendanceDoc.students.find(
         (s) => s.studentId.toString() === studentId
       );
@@ -41,37 +42,40 @@ export const markAttendance = async (req, res) => {
           department,
           year,
           section,
-          periods: [{
-            periodNumber: period,
-            subject: subject,
-            status,
-          }],
+          periods: periods.map(p => ({
+            periodNumber: String(p.periodNumber),
+            subject: p.subject,
+            status: p.status
+          })),
         });
       } else {
-        const periodIndex = existingStudent.periods.findIndex(
-          (p) => p.periodNumber === period
-        );
+        periods.forEach((periodObj) => {
+          const existingPeriod = existingStudent.periods.find(
+            (p) => p.periodNumber === String(periodObj.periodNumber)
+          );
 
-        if (periodIndex !== -1) {
-          existingStudent.periods[periodIndex].status = status;
-        } else {
-          existingStudent.periods.push({
-            periodNumber: period,
-            subject: subject,
-            status,
-          });
-        }
+          if (existingPeriod) {
+            existingPeriod.status = periodObj.status;
+            existingPeriod.subject = periodObj.subject;
+          } else {
+            existingStudent.periods.push({
+              periodNumber: String(periodObj.periodNumber),
+              subject: periodObj.subject,
+              status: periodObj.status,
+            });
+          }
+        });
       }
     });
 
     await attendanceDoc.save();
-    return res.status(200).json({ success: true, message: "Attendance saved." });
-
+    return res.status(200).json({ success: true, message: "Attendance saved.", updated: true });
   } catch (err) {
     console.error("Mark Attendance Error:", err);
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 
 export const viewAttendance = async (req, res) => {
