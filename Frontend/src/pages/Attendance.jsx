@@ -165,6 +165,28 @@ const [subjects, setSubjects] = useState([]);
     }
   };
 
+  const viewAttendance = async () => {
+    try {
+      const res = await axios.get(backendUrl + "/api/attendance/view", {
+        params: {
+          department: form.department,
+          year: form.year,
+          section: form.section,
+          semester: form.semester,
+          date: form.date,
+        },
+      });
+      if (res.data.success) {
+        setStudents(res.data.students);
+      } else {
+        toast.error("No attendance found");
+      }
+    } catch (err) {
+      toast.error("Error fetching data");
+    }
+  };
+  
+
   const handleSendMessageClick = (student) => {
     setSelectedStudent(student);
   
@@ -512,17 +534,6 @@ const [subjects, setSubjects] = useState([]);
     </select>
             </div>
             <div>
-            <label className="block mb-1 font-semibold">Subject</label>
-            <select value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="border px-4 py-2 rounded">
-      <option value="">Select Subject</option>
-      {subjects.map(subj => (
-        <option key={subj._id} value={subj.name}>
-          {subj.name}
-        </option>
-      ))}
-    </select>
-            </div>
-            <div>
               <label className="block mb-1 font-semibold">Section</label>
               <select
                 value={formData.section}
@@ -547,6 +558,14 @@ const [subjects, setSubjects] = useState([]);
                 }
                 className="border px-4 py-2 rounded"
               />
+            </div>
+            <div>
+            <button
+              className="bg-purple-700 text-white px-4 py-2 rounded self-end mx-auto"
+              onClick={viewAttendance}
+            >
+              View Attendance
+            </button>
             </div>
           </div>
     

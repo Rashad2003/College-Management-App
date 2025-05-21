@@ -17,7 +17,7 @@ export const markAttendance = async (req, res) => {
       semester,
       date: {
         $gte: attendanceDate,
-        $lt: endOfDay,
+        $lte: endOfDay,
       },
     });
 
@@ -81,18 +81,35 @@ export const markAttendance = async (req, res) => {
 
 
 export const viewAttendance = async (req, res) => {
-  const { department, year, section, date } = req.query;
+  const { department, year, section, semester, date } = req.query;
   try {
-    const records = await Attendance.find({
-      department, 
-      year, 
+    const record = await Attendance.findOne({
+      department,
+      year,
       section,
-      date: { $gte: new Date(date), $lt: new Date(date).setHours(23,59,59,999) },
-    }).populate("students.studentId", "name register gender");
+      semester,
+      date: {
+        $gte: new Date(date),
+        $lte: new Date(date).setHours(23, 59, 59, 999),
+      },
+    });
 
-    res.status(200).json({ success: true, data: records });
+    if (!record) {
+      return res.json({ success: false, message: "No record found" });
+    }
+
+    return res.json({
+      success: true,
+      students: record.students.map(s => ({
+        studentId: s.studentId,
+        name: s.name,
+        register: s.register,
+        periods: s.periods, // contains periodNumber, status, subject
+      })),
+    });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Error fetching attendance" });
+    console.error(err);
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
 
@@ -260,7 +277,7 @@ export const fetchAttendance = async (req, res) => {
       semester,
       date: {
         $gte: attendanceDate,
-        $lt: endOfDay,
+        $lte: endOfDay,
       },
     });
 
