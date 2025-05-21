@@ -11,10 +11,9 @@ export const markAttendance = async (req, res) => {
       year,
       section,
       semester,
-      date: {
-        $gte: new Date(date),
-        $lt: new Date(date).setHours(23, 59, 59, 999),
-      },
+      date,
+      facultyId: req.user?.id || null,
+      students: [],
     });
 
     if (!attendanceDoc) {
@@ -43,22 +42,22 @@ export const markAttendance = async (req, res) => {
           year,
           section,
           periods: [{
-            periodNumber: String(period),
-            subject,
+            periodNumber: period,
+            subject: subject,
             status,
           }],
         });
       } else {
         const periodIndex = existingStudent.periods.findIndex(
-          (p) => p.periodNumber === String(period)
+          (p) => p.periodNumber === period
         );
 
         if (periodIndex !== -1) {
           existingStudent.periods[periodIndex].status = status;
         } else {
           existingStudent.periods.push({
-            periodNumber: String(period),
-            subject,
+            periodNumber: period,
+            subject: subject,
             status,
           });
         }
@@ -249,10 +248,7 @@ export const fetchAttendance = async (req, res) => {
       department,
       year,
       section,
-      date: {
-        $gte: new Date(date),
-        $lt: new Date(date).setHours(23, 59, 59, 999),
-      },
+      date,
     });
 
     if (!record) {
@@ -262,7 +258,7 @@ export const fetchAttendance = async (req, res) => {
     const filteredStudents = record.students
       .map((student) => {
         const periodData = student.periods.find(
-          (p) => p.periodNumber === String(period)
+          (p) => p.periodNumber === period
         );
         if (periodData) {
           return {
