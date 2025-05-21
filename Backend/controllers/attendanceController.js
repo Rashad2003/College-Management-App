@@ -80,8 +80,6 @@ export const markAttendance = async (req, res) => {
 };
 
 
-
-
 export const viewAttendance = async (req, res) => {
   const { department, year, section, date } = req.query;
   try {
@@ -247,16 +245,23 @@ export const getStudentReport = async (req, res) => {
   }
 };
 
-
 export const fetchAttendance = async (req, res) => {
-  const { department, year, section, date, subject, period } = req.query;
+  const { department, year, section, semester, date, period, subject } = req.query;
 
   try {
+    const attendanceDate = new Date(date);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
     const record = await Attendance.findOne({
       department,
       year,
       section,
-      date,
+      semester,
+      date: {
+        $gte: attendanceDate,
+        $lt: endOfDay,
+      },
     });
 
     if (!record) {
@@ -266,8 +271,11 @@ export const fetchAttendance = async (req, res) => {
     const filteredStudents = record.students
       .map((student) => {
         const periodData = student.periods.find(
-          (p) => p.periodNumber === period
+          (p) =>
+            p.periodNumber === String(period) &&
+            p.subject === subject
         );
+
         if (periodData) {
           return {
             studentId: student.studentId,
@@ -281,8 +289,10 @@ export const fetchAttendance = async (req, res) => {
       .filter(Boolean);
 
     return res.json({ exists: true, students: filteredStudents });
+
   } catch (err) {
     console.error("Fetch Attendance Error:", err);
     return res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
