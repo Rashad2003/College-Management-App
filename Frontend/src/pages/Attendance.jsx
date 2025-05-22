@@ -69,7 +69,7 @@ const [attendanceData, setAttendanceData] = useState(null);
       });
       console.log(res)
 
-      if (res.data.exists) {
+      if (res.data.success) {
         const saved = {};
         res.data.attendance.students.forEach((record) => {
           const periodRecord = record.periods.find(

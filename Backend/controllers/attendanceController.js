@@ -288,27 +288,26 @@ export const fetchAttendance = async (req, res) => {
       return res.json({ exists: false });
     }
 
-    const filteredStudents = record.students
-      .map((student) => {
-        const periodData = student.periods.find(
-          (p) =>
-            p.periodNumber === String(period) &&
-            p.subject === subject
-        );
+    const students = record.students.map(student => {
+      const periodsMap = {};
+      student.periods.forEach(p => {
+        periodsMap[p.periodNumber] = p.status;
+      });
 
-        if (periodData) {
-          return {
-            studentId: student.studentId,
-            name: student.name,
-            register: student.register,
-            status: periodData.status,
-          };
-        }
-        return null;
-      })
-      .filter(Boolean);
+      const periodsStatus = [];
+      for (let i = 1; i <= 8; i++) {
+        periodsStatus.push(periodsMap[String(i)] || "Not Marked");
+      }
 
-    return res.json({ exists: true, students: filteredStudents });
+      return {
+        studentId: student.studentId,
+        name: student.name,
+        register: student.register,
+        periodsStatus,
+      };
+    });
+
+    return res.json({ exists: true, students });
 
   } catch (err) {
     console.error("Fetch Attendance Error:", err);
