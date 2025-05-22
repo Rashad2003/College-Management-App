@@ -82,39 +82,51 @@ export const markAttendance = async (req, res) => {
 
 export const viewAttendance = async (req, res) => {
   const { department, year, section, semester, date } = req.query;
+
   try {
-    const dateStart = new Date(date);
-const dateEnd = new Date(dateStart);
-dateEnd.setHours(23, 59, 59, 999);
+    const start = new Date(date);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
     const record = await Attendance.findOne({
       department,
       year,
       section,
       semester,
-      date: {
-        $gte: dateStart,
-    $lte: dateEnd,
-      },
+      date: { $gte: start, $lte: end },
     });
 
     if (!record) {
-      return res.json({ success: false, message: "No record found" });
+      return res.json({ exists: false });
     }
 
-    return res.json({
-      success: true,
-      students: record.students.map(s => ({
-        studentId: s.studentId,
-        name: s.name,
-        register: s.register,
-        periods: s.periods, // contains periodNumber, status, subject
-      })),
+    const students = record.students.map(student => {
+      // Map periodNumber to status for easier lookup
+      const statusMap = {};
+      student.periods.forEach(p => {
+        statusMap[p.periodNumber] = p.status;
+      });
+
+      // Make an array for all 8 periods
+      const periodsStatus = [];
+      for (let i = 1; i <= 8; i++) {
+        periodsStatus.push(statusMap[String(i)] || "Not Marked");
+      }
+
+      return {
+        name: student.name,
+        register: student.register,
+        periodsStatus,
+      };
     });
+
+    return res.json({ exists: true, students });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, message: err.message });
+    return res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
 
 export const sendMessageToParent = async (req, res) => {
   const { studentId, message } = req.body;

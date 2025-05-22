@@ -28,6 +28,7 @@ const [attendanceData, setAttendanceData] = useState(null);
   useEffect(() => {
     if (formData.department && formData.year && formData.section && formData.date) {
       fetchAttendanceData();
+      viewAttendance();
     }
   }, [formData.department, formData.year, formData.section, formData.date]);
 
@@ -592,22 +593,13 @@ const [attendanceData, setAttendanceData] = useState(null);
     </tr>
   </thead>
   <tbody>
-    {attendanceData?.students?.map((student) => (
-      <tr key={student.studentId} className="text-center">
+  {students.map((student, idx) => (
+      <tr key={idx} className="text-center">
         <td className="border p-2">{student.name}</td>
         <td className="border p-2">{student.register}</td>
-        {[...Array(8)].map((_, i) => {
-          const periodNumber = (i + 1).toString();
-          const period = student.periods.find(
-            (p) => p.periodNumber === periodNumber
-          );
-          const status = period?.status || "-";
-          return (
-            <td className="border p-2" key={i} style={{ backgroundColor: getStatusColor(status) }}>
-              {status[0]}
-            </td>
-          );
-        })}
+        {student.periodsStatus.map((status, i) => (
+          <td key={i} className="border p-2">{status}</td>
+        ))}
       </tr>
     ))}
   </tbody>
