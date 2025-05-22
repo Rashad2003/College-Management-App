@@ -122,7 +122,7 @@ export const viewAttendance = async (req, res) => {
 
   } catch (err) {
     console.error("View Attendance Error:", err);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
