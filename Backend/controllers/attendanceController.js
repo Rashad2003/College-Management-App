@@ -84,14 +84,17 @@ export const viewAttendance = async (req, res) => {
   const { department, year, section, semester, date } = req.query;
 
   try {
+    const attendanceDate = new Date(date);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
     const record = await Attendance.findOne({
       department,
       year,
       section,
       semester,
       date: {
-        $gte: new Date(date),
-        $lte: new Date(date).setHours(23, 59, 59, 999),
+        $gte: attendanceDate,
+        $lte: endOfDay,
       },
     });
 
