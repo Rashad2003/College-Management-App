@@ -84,9 +84,15 @@ export const viewAttendance = async (req, res) => {
   const { department, year, section, semester, date } = req.query;
 
   try {
-    const attendanceDate = new Date(date);
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Validate and parse date
+    if (!date || isNaN(Date.parse(date))) {
+      return res.status(400).json({ success: false, message: "Invalid or missing date" });
+    }
+
+    const attendanceDate = new Date(`${date}T00:00:00.000Z`);
+    const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+    // Find the record for the given filters
     const record = await Attendance.findOne({
       department,
       year,
@@ -99,32 +105,29 @@ export const viewAttendance = async (req, res) => {
     });
 
     if (!record) {
-      return res.json({ success: false, message: "No attendance record found" });
+      return res.json({ success: false, message: "No record found" });
     }
 
-    const studentsData = record.students.map((student) => {
-      // Create a default array with 8 "Not Marked" statuses
-      const periodsStatus = Array(8).fill("Not Marked");
-
-      // Fill actual statuses
-      student.periods.forEach((p) => {
-        const idx = parseInt(p.periodNumber) - 1;
-        if (idx >= 0 && idx < 8) {
-          periodsStatus[idx] = p.status;
-        }
+    // Prepare formatted student data
+    const students = record.students.map((student) => {
+      const periodsStatus = Array.from({ length: 8 }, (_, i) => {
+        const periodNumber = String(i + 1);
+        const periodData = student.periods.find(p => p.periodNumber === periodNumber);
+        return periodData ? periodData.status : "Not Marked";
       });
 
       return {
+        studentId: student.studentId,
         name: student.name,
         register: student.register,
-        periodsStatus, // array of 8 period statuses
+        periodsStatus, // Array of 8 statuses
       };
     });
 
-    return res.json({ success: true, students: studentsData });
+    return res.json({ success: true, students });
 
   } catch (err) {
-    console.error("View Attendance Error:", err);
+    console.error("Fetch Attendance Error:", err);
     return res.status(500).json({ success: false, message: err.message });
   }
 };
@@ -280,13 +283,18 @@ export const getStudentReport = async (req, res) => {
 };
 
 export const fetchAttendance = async (req, res) => {
-  const { department, year, section, semester, date, period, subject } = req.query;
+  const { department, year, section, semester, date } = req.query;
 
   try {
-    const attendanceDate = new Date(date);
-    const endOfDay = new Date(date);
-    endOfDay.setHours(23, 59, 59, 999);
+    // Validate and parse date
+    if (!date || isNaN(Date.parse(date))) {
+      return res.status(400).json({ success: false, message: "Invalid or missing date" });
+    }
 
+    const attendanceDate = new Date(`${date}T00:00:00.000Z`);
+    const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+    // Find the record for the given filters
     const record = await Attendance.findOne({
       department,
       year,
@@ -299,33 +307,30 @@ export const fetchAttendance = async (req, res) => {
     });
 
     if (!record) {
-      return res.json({ exists: false });
+      return res.json({ success: false, message: "No record found" });
     }
 
-    const students = record.students.map(student => {
-      const periodsMap = {};
-      student.periods.forEach(p => {
-        periodsMap[p.periodNumber] = p.status;
+    // Prepare formatted student data
+    const students = record.students.map((student) => {
+      const periodsStatus = Array.from({ length: 8 }, (_, i) => {
+        const periodNumber = String(i + 1);
+        const periodData = student.periods.find(p => p.periodNumber === periodNumber);
+        return periodData ? periodData.status : "Not Marked";
       });
-
-      const periodsStatus = [];
-      for (let i = 1; i <= 8; i++) {
-        periodsStatus.push(periodsMap[String(i)] || "Not Marked");
-      }
 
       return {
         studentId: student.studentId,
         name: student.name,
         register: student.register,
-        periodsStatus,
+        periodsStatus, // Array of 8 statuses
       };
     });
 
-    return res.json({ exists: true, students });
+    return res.json({ success: true, students });
 
   } catch (err) {
     console.error("Fetch Attendance Error:", err);
-    return res.status(500).json({ success: false, message: "Server Error" });
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
