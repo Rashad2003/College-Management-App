@@ -84,45 +84,44 @@ export const viewAttendance = async (req, res) => {
   const { department, year, section, semester, date } = req.query;
 
   try {
-    const start = new Date(date);
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
-
     const record = await Attendance.findOne({
       department,
       year,
       section,
       semester,
-      date: { $gte: start, $lte: end },
+      date: {
+        $gte: new Date(date),
+        $lte: new Date(date).setHours(23, 59, 59, 999),
+      },
     });
 
     if (!record) {
-      return res.json({ exists: false });
+      return res.json({ success: false, message: "No attendance record found" });
     }
 
-    const students = record.students.map(student => {
-      // Map periodNumber to status for easier lookup
-      const statusMap = {};
-      student.periods.forEach(p => {
-        statusMap[p.periodNumber] = p.status;
-      });
+    const studentsData = record.students.map((student) => {
+      // Create a default array with 8 "Not Marked" statuses
+      const periodsStatus = Array(8).fill("Not Marked");
 
-      // Make an array for all 8 periods
-      const periodsStatus = [];
-      for (let i = 1; i <= 8; i++) {
-        periodsStatus.push(statusMap[String(i)] || "Not Marked");
-      }
+      // Fill actual statuses
+      student.periods.forEach((p) => {
+        const idx = parseInt(p.periodNumber) - 1;
+        if (idx >= 0 && idx < 8) {
+          periodsStatus[idx] = p.status;
+        }
+      });
 
       return {
         name: student.name,
         register: student.register,
-        periodsStatus,
+        periodsStatus, // array of 8 period statuses
       };
     });
 
-    return res.json({ exists: true, students });
+    return res.json({ success: true, students: studentsData });
+
   } catch (err) {
-    console.error(err);
+    console.error("View Attendance Error:", err);
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };

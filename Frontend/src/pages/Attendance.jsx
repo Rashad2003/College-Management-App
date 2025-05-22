@@ -597,7 +597,7 @@ const [attendanceData, setAttendanceData] = useState(null);
       <tr key={idx} className="text-center">
         <td className="border p-2">{student.name}</td>
         <td className="border p-2">{student.register}</td>
-        {student.periodsStatus.map((status, i) => (
+        {student.periodsStatus?.map((status, i) => (
           <td key={i} className="border p-2">{status}</td>
         ))}
       </tr>
