@@ -23,6 +23,7 @@ export const Attendance = () => {
   const [message, setMessage] = useState("");
   const token = localStorage.getItem("token");
 const [subjects, setSubjects] = useState([]);
+const [attendanceData, setAttendanceData] = useState(null);
 
   useEffect(() => {
     if (formData.department && formData.year && formData.section && formData.date) {
@@ -72,7 +73,7 @@ const [subjects, setSubjects] = useState([]);
         const saved = {};
         res.data.attendance.students.forEach((record) => {
           const periodRecord = record.periods.find(
-            (p) => p.periodNumber === Number(formData.period)
+            (p) => p.periodNumber === formData.period
           );
           saved[record.studentId] = periodRecord ? periodRecord.status : "Present";
         });
@@ -134,17 +135,19 @@ const [subjects, setSubjects] = useState([]);
     section: formData.section,
     semester: formData.semester,
     date: formData.date,
-    students: Object.entries(attendance).map(([id, periodStatusMap]) => {
+    students: Object.entries(attendance).map(([id, status]) => {
       const student = students.find((s) => s._id === id);
       return {
         studentId: id,
         name: student?.name || "",
         register: student?.register || "",
-        periods: [...Array(8)].map((_, i) => ({
-          periodNumber: String(i + 1),
-          subject: formData.subject,
-          status: periodStatusMap[i] || "Present",
-        })),
+        periods: [
+          {
+            periodNumber: String(formData.period),
+            subject: formData.subject,
+            status,
+          },
+        ],
       };
     }),
   };
@@ -165,7 +168,8 @@ const [subjects, setSubjects] = useState([]);
     }
   };
 
-  const viewAttendance = async () => {
+  const viewAttendance = async (e) => {
+    e.preventDefault()
     try {
       const res = await axios.get(backendUrl + "/api/attendance/view", {
         params: {
@@ -176,10 +180,12 @@ const [subjects, setSubjects] = useState([]);
           date: form.date,
         },
       });
+      console.log(res);
       if (res.data.success) {
-        setStudents(res.data.students);
+        setAttendanceData(res.data);
       } else {
         toast.error("No attendance found");
+        setAttendanceData(null);
       }
     } catch (err) {
       toast.error("Error fetching data");
@@ -190,19 +196,23 @@ const [subjects, setSubjects] = useState([]);
   const handleSendMessageClick = (student) => {
     setSelectedStudent(student);
   
-    const absentPeriods = attendance[student._id]
-      ?.map((status, index) => (status === "Absent" ? index + 1 : null))
-      .filter((p) => p !== null);
+    const studentAttendance = attendance[student._id] || {}; // ensure it's at least an object
+  
+    const absentPeriods = Object.entries(studentAttendance)
+      .filter(([_, status]) => status === "Absent")
+      .map(([period]) => period); // keys are the period numbers
   
     const absentText = absentPeriods.length > 0
       ? `for Period(s): ${absentPeriods.join(", ")}`
       : "";
   
-    const defaultMsg = `Dear Parent, your child ${student.name} was absent on ${formData.date} ${absentText}.`;
-  console.log(student.name);
+    const defaultMsg = `Dear Parent, your child ${student.name} was absent on ${formData.date} ${absentText} for Periods(${formData.period}).`;
+  
+    console.log(student.name);
     setMessage(defaultMsg);
     setShowPopup(true);
   };
+  
   
 
   const handleSend = async () => {
@@ -572,49 +582,37 @@ const [subjects, setSubjects] = useState([]);
           {students.length > 0 && (
             <div className="overflow-auto w-[75vw]">
               <table className="w-full border text-sm">
-                <thead>
-                  <tr className="bg-purple-100 text-center">
-                    <th className="border p-2">Name</th>
-                    <th className="border p-2">Register No</th>
-                    {[...Array(8)].map((_, i) => (
-                      <th key={i} className="border p-2">{`Period ${i + 1}`}</th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {students.map((student) => (
-                    <tr key={student._id} className="text-center">
-                      <td className="border p-2">{student.name}</td>
-                      <td className="border p-2">{student.register}</td>
-                      {[...Array(8)].map((_, i) => (
-                        <td key={i} className="border p-2">
-                          <div className="flex justify-center">
-                            <select
-                              value={attendance[student._id]?.[i] || "Present"}
-                              onChange={(e) =>
-                                handlePeriodChange(student._id, i, e.target.value)
-                              }
-                              className="appearance-none w-6 h-6 rounded-full cursor-pointer border-none focus:outline-none"
-                              style={{
-                                backgroundColor:
-                                  attendance[student._id]?.[i] === "Present"
-                                    ? "#4ade80"
-                                    : attendance[student._id]?.[i] === "Absent"
-                                    ? "#f87171"
-                                    : "#facc15",
-                              }} disabled
-                            >
-                              <option value="Present" className="bg-green-400 text-center text-bold">P</option>
-                              <option value="Absent" className="bg-red-400 text-center text-bold">A</option>
-                              <option value="Late" className="bg-yellow-400 text-center text-bold">L</option>
-                            </select>
-                          </div>
-                        </td>
-                      ))}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+  <thead>
+    <tr className="bg-purple-100 text-center">
+      <th className="border p-2">Name</th>
+      <th className="border p-2">Register No</th>
+      {[...Array(8)].map((_, i) => (
+        <th className="border p-2" key={i}>Period {i + 1}</th>
+      ))}
+    </tr>
+  </thead>
+  <tbody>
+    {attendanceData?.students?.map((student) => (
+      <tr key={student.studentId} className="text-center">
+        <td className="border p-2">{student.name}</td>
+        <td className="border p-2">{student.register}</td>
+        {[...Array(8)].map((_, i) => {
+          const periodNumber = (i + 1).toString();
+          const period = student.periods.find(
+            (p) => p.periodNumber === periodNumber
+          );
+          const status = period?.status || "-";
+          return (
+            <td className="border p-2" key={i} style={{ backgroundColor: getStatusColor(status) }}>
+              {status[0]}
+            </td>
+          );
+        })}
+      </tr>
+    ))}
+  </tbody>
+</table>
+
             </div>
           )}
           </>

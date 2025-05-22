@@ -83,14 +83,17 @@ export const markAttendance = async (req, res) => {
 export const viewAttendance = async (req, res) => {
   const { department, year, section, semester, date } = req.query;
   try {
+    const dateStart = new Date(date);
+const dateEnd = new Date(dateStart);
+dateEnd.setHours(23, 59, 59, 999);
     const record = await Attendance.findOne({
       department,
       year,
       section,
       semester,
       date: {
-        $gte: new Date(date),
-        $lte: new Date(date).setHours(23, 59, 59, 999),
+        $gte: dateStart,
+    $lte: dateEnd,
       },
     });
 
@@ -109,7 +112,7 @@ export const viewAttendance = async (req, res) => {
     });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ success: false, message: "Server error" });
+    return res.status(500).json({ success: false, message: err.message });
   }
 };
 
