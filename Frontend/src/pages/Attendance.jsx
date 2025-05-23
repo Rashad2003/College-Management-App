@@ -322,7 +322,7 @@ const [studentsData, setStudentsData] = useState([]);
         </div>
         <div>
         <label className="block mb-1 font-semibold">Subject</label>
-        <select value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="border px-4 py-2 rounded">
+        <select value={formData.subject} onChange={(e) => setFormData({ ...formData, subject: e.target.value })} className="border px-4 py-2 rounded w-[10rem]">
   <option value="">Select Subject</option>
   {subjects.map(subj => (
     <option key={subj._id} value={subj.name}>
