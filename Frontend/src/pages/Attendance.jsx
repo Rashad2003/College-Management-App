@@ -249,7 +249,7 @@ const [studentsData, setStudentsData] = useState([]);
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
-      <div className="flex justify-center gap-4 mb-8">
+      <div className="flex justify-center gap-4 mb-8 flex-wrap">
         <button
           onClick={() => setCurrentPage("Mark Attendance")}
           className={`px-6 py-2 rounded-lg ${
@@ -572,7 +572,7 @@ const [studentsData, setStudentsData] = useState([]);
             </div>
             <div>
             <button
-              className="bg-purple-700 text-white px-4 py-2 rounded self-end mx-auto"
+              className="bg-purple-700 text-white px-4 py-2 rounded self-end mx-auto mt-[1.8rem]"
               onClick={fetchAttendanceData}
             >
               View Attendance
