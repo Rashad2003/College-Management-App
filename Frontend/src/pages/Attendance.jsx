@@ -168,8 +168,7 @@ const [studentsData, setStudentsData] = useState([]);
     }
   };
 
-  const viewAttendance = async (e) => {
-    e.preventDefault()
+  const viewAttendance = async () => {
     const dateString = new Date(formData.date).toISOString().split('T')[0];
     try {
       const res = await axios.get(backendUrl + "/api/attendance/view", {
