@@ -75,7 +75,6 @@ export const Report = () => {
 doc.text("C.ABDUL HAKEEM COLLEGE OF ENGINEERING AND TECHNOLOGY", 55, 20);
 doc.text("MELVISHARAM - 632509", 100, 28);
 doc.text("DEPARTMENT OF INFORMATION TECHNOLOGY", 75, 36);
-doc.text("ACADEMIC YEAR 2024 - 2025", 95, 44);
 doc.addImage(logoBase64, "PNG", 15, 10, 30, 30);
 doc.setLineWidth(1);
 doc.line(300, 50, 0, 50);
@@ -101,7 +100,14 @@ doc.text("CLASS ATTENDANCE REPORT", 75, 60);
 
   const handleStudentReportPrint = () => {
     const doc = new jsPDF();
-    doc.text("Student Attendance Report", 14, 16);
+    doc.setFontSize(13);
+doc.text("C.ABDUL HAKEEM COLLEGE OF ENGINEERING AND TECHNOLOGY", 55, 20);
+doc.text("MELVISHARAM - 632509", 100, 28);
+doc.text("DEPARTMENT OF INFORMATION TECHNOLOGY", 75, 36);
+doc.addImage(logoBase64, "PNG", 15, 10, 30, 30);
+doc.setLineWidth(1);
+doc.line(300, 50, 0, 50);
+doc.text("STUDENT ATTENDANCE REPORT", 75, 60);
     autoTable(doc, {
       startY: 20,
       head: [["No", "Name", "Reg No", "Department", "Year", "Section", "Total", "Present", "Absent", "%"]],
