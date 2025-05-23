@@ -74,7 +74,7 @@ doc.text("C.ABDUL HAKEEM COLLEGE OF ENGINEERING AND TECHNOLOGY", 55, 20);
 doc.text("MELVISHARAM - 632509", 100, 28);
 doc.text("DEPARTMENT OF INFORMATION TECHNOLOGY", 75, 36);
 doc.text("ACADEMIC YEAR 2024 - 2025", 95, 44);
-doc.addImage("examples/images/Octonyan.jpg", "JPEG",15, 10, 30, 30);
+doc.addImage("../assets/Logo-Copy.png", "JPEG",15, 10, 30, 30);
 doc.setLineWidth(1);
 doc.line(300, 50, 0, 50);
 doc.text("CLASS ATTENDANCE REPORT", 75, 60);

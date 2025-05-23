@@ -24,6 +24,7 @@ export const Attendance = () => {
   const token = localStorage.getItem("token");
 const [subjects, setSubjects] = useState([]);
 const [attendanceData, setAttendanceData] = useState(null);
+const [studentsData, setStudentsData] = useState([]);
 
   useEffect(() => {
     if (formData.department && formData.year && formData.section && formData.date) {
@@ -58,32 +59,30 @@ const [attendanceData, setAttendanceData] = useState(null);
   
 
   const fetchAttendanceData = async () => {
+    const dateString = new Date(formData.date).toISOString().split('T')[0];
     try {
       const res = await axios.get(`${backendUrl}/api/attendance/fetch`, {
         params: {
           department: formData.department,
           year: formData.year,
           section: formData.section,
-          date: formData.date,
+          semester: formData.semester,
+          date: dateString,
         },
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(res)
 
       if (res.data.success) {
-        const saved = {};
-        res.data.attendance.students.forEach((record) => {
-          const periodRecord = record.periods.find(
-            (p) => p.periodNumber === formData.period
-          );
-          saved[record.studentId] = periodRecord ? periodRecord.status : "Present";
-        });
-        setAttendance(saved);
-        setStudents(res.data.attendance.students.map((s) => ({
-          _id: s.studentId,
-          name: s.name,
-          register: s.register,
-        })));
+        // const saved = {};
+        // res.data.students.forEach((record) => {
+        //   const periodRecord = record.periods.find(
+        //     (p) => p.periodNumber === formData.period
+        //   );
+        //   saved[record.studentId] = periodRecord ? periodRecord.status : "Present";
+        // });
+        // setAttendance(saved);
+        setStudents(res.data.students);
       } else {
         fetchStudents();
       }
@@ -171,6 +170,7 @@ const [attendanceData, setAttendanceData] = useState(null);
 
   const viewAttendance = async (e) => {
     e.preventDefault()
+    const dateString = new Date(formData.date).toISOString().split('T')[0];
     try {
       const res = await axios.get(backendUrl + "/api/attendance/view", {
         params: {
@@ -178,12 +178,13 @@ const [attendanceData, setAttendanceData] = useState(null);
           year: form.year,
           section: form.section,
           semester: form.semester,
-          date: form.date,
+          date: dateString,
         },
       });
+      console.log("Sending date:", formData.date, typeof formData.date);
       console.log(res);
       if (res.data.success) {
-        setAttendanceData(res.data);
+        setStudentsData(res.data.students);
       } else {
         toast.error("No attendance found");
         setAttendanceData(null);
@@ -573,7 +574,7 @@ const [attendanceData, setAttendanceData] = useState(null);
             <div>
             <button
               className="bg-purple-700 text-white px-4 py-2 rounded self-end mx-auto"
-              onClick={viewAttendance}
+              onClick={fetchAttendanceData}
             >
               View Attendance
             </button>
@@ -593,13 +594,33 @@ const [attendanceData, setAttendanceData] = useState(null);
     </tr>
   </thead>
   <tbody>
-  {students.map((student, idx) => (
-      <tr key={idx} className="text-center">
+  {students.map((student) => (
+      <tr key={student.studentId} className="text-center">
         <td className="border p-2">{student.name}</td>
         <td className="border p-2">{student.register}</td>
-        {student.periodsStatus?.map((status, i) => (
-          <td key={i} className="border p-2">{status}</td>
-        ))}
+        {student.periodsStatus?.map((status, i) => {
+  let short = "-";
+  let bgClass = "bg-gray-400";
+
+  if (status === "Present") {
+    short = "P";
+    bgClass = "bg-green-400";
+  } else if (status === "Absent") {
+    short = "A";
+    bgClass = "bg-red-400";
+  } else if (status === "Late") {
+    short = "L";
+    bgClass = "bg-orange-400";
+  }
+
+  return (
+    <td key={i} className="border p-2">
+      <div className={`${bgClass} appearance-none rounded-full w-6 h-6 flex items-center justify-center mx-auto cursor-pointer border-none focus:outline-non`}>
+        {short}
+      </div>
+    </td>
+  );
+})}
       </tr>
     ))}
   </tbody>
