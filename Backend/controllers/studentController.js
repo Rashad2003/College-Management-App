@@ -1,15 +1,28 @@
 import Student from "../models/studentModel.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import validator from "validator";
 
 export const addStudent = async (req, res) => {
-  const { name, department, year, section, dob, register, email, phone, gender } = req.body;
+  const { name, department, year, section, dob, register, email, password, phone, gender} = req.body;
 
   try {
     const existing = await Student.findOne({ register, email });
     if (existing) {
-      return res.status(400).json({ success: false, message: "Student with this register number already exists" });
+      return res.status(400).json({ success: false, message: "Student already exists" });
     }
 
-    const newStudent = new Student({ name, department, year, section, dob, register, email, phone, gender, role: "student" });
+    if (!validator.isEmail(email)) {
+      return res.json({ success: false, message: "Please enter a Valid Email" });
+    }
+
+    if (password.length < 8) {
+      return res.json({ success: false, message: "Please enter a Strong Password" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newStudent = new Student({ name, department, year, section, dob, register, email, password: hashedPassword, phone, gender, role: "Student" });
 
     await newStudent.save();
 
@@ -62,5 +75,27 @@ export const deleteStudent = async (req, res) => {
     res.json({ success: true, message: "Student deleted" });
   } catch (err) {
     res.status(500).json({ success: false, message: "Error deleting student" });
+  }
+};
+
+export const loginStudent = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await Student.findOne({ email });
+    if (!user) return res.status(404).json({ message: "Student not found" });
+
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ message: "Invalid password" });
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+
+    res.json({ token, user, message: "Login successful" });
+    console.log(res.data);
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

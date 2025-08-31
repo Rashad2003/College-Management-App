@@ -10,21 +10,32 @@ import { Attendance } from "./pages/Attendance";
 import { Report } from "./pages/Report";
 import { ResetPassword } from "./pages/ResetPassword";
 import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
+// import Sidebar from "./components/Sidebar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { TeacherList } from "./pages/TeacherList";
 import { StudentList } from "./pages/StudentList";
-import AddSubject from "./pages/AddSubject";
+import { Course } from "./pages/Course";
 import { FacultyDashboard } from "./pages/FacultyDashboard";
 import { Department } from "./pages/Department";
+import Admin from "./pages/Admin";
+import Faculty from "./pages/Faculty";
+import Student from "./pages/Student";
+import FacultyAnnouncement from "./pages/FacultyAnnouncement";
+import FacultyTimetable from "./pages/FacultyTimetable";
+import FacultyResult from "./pages/FacultyResult";
+import FacultyStudymaterials from "./pages/FacultyStudymaterials";
+import StudentAnnouncement from "./pages/StudentAnnouncement";
+import StudentTimetable from "./pages/StudentTimetable";
+import StudentResult from "./pages/StudentResult";
+import StudentStudymaterials from "./pages/StudentStudymaterials";
 
 const ProtectedRoute = ({ element, role }) => {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = localStorage.getItem("token");
 
   if (!token || !user) return <Navigate to="/login" replace />;
-  if (role && user.role !== role) return <Navigate to="/attendance" replace />;
+  if (role && user.role !== role) return <Navigate to="/login" replace />;
 
   return element;
 };
@@ -34,11 +45,8 @@ const Layout = () => {
   return (
     <>
       <Header />
-      <div className="grid grid-cols-[1fr_5fr]">
-        <Sidebar />
-        <div>
+      <div>
           <Outlet />
-        </div>
       </div>
     </>
   );
@@ -57,6 +65,9 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* Protected Routes inside Layout */}
         <Route element={<Layout />}>
+        <Route path="/admin" element={<Admin />} role="Admin" />
+        <Route path="/faculty" element={<Faculty />} role="Faculty" />
+        <Route path="/student" element={<Student />} role="Student" />
           <Route
             path="/dashboard"
             element={<ProtectedRoute element={<Dashboard />} role="Admin" />}
@@ -70,8 +81,8 @@ function App() {
             element={<ProtectedRoute element={<AddStudent />} role="Admin" />}
           />
           <Route
-            path="/subject"
-            element={<ProtectedRoute element={<AddSubject />} role="Admin" />}
+            path="/course"
+            element={<ProtectedRoute element={<Course />} role="Admin" />}
           />
           <Route
             path="/attendance"
@@ -81,6 +92,16 @@ function App() {
             path="/faculty/dashboard"
             element={<ProtectedRoute element={<FacultyDashboard />} />}
           />
+          <Route path="/faculty/announcement" element={<ProtectedRoute element={<FacultyAnnouncement />} role={"Admin" & "Faculty"} />} />
+          <Route path="/faculty/timetable" element={<ProtectedRoute element={<FacultyTimetable />} role={"Admin" & "Faculty"} />} />
+          <Route path="/faculty/result" element={<ProtectedRoute element={<FacultyResult />} role={"Admin" & "Faculty"} />} />
+          <Route path="/faculty/studymaterials" element={<ProtectedRoute element={<FacultyStudymaterials />} role={"Admin" & "Faculty"} />} />
+          
+          <Route path="/student/announcement" element={<ProtectedRoute element={<StudentAnnouncement />} role="Student" />} />
+          <Route path="/student/timetable" element={<ProtectedRoute element={<StudentTimetable />} role="Student" />} />
+          <Route path="/student/result" element={<ProtectedRoute element={<StudentResult />} role="Student" />} />
+          <Route path="/student/studymaterials" element={<ProtectedRoute element={<StudentStudymaterials />} role="Student" />} />
+
           <Route
             path="/report"
             element={<ProtectedRoute element={<Report />} />}

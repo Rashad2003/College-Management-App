@@ -7,9 +7,11 @@ const studentSchema = new mongoose.Schema({
   phone: String,
   dob: String,
   email: { type: String, unique: true },
+  password: String,
   department: String,
 year: String,
 section: String,
+role: String,
 });
 
 const Student = mongoose.models.Student || mongoose.model("Student", studentSchema);

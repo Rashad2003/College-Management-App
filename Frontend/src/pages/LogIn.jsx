@@ -33,16 +33,25 @@ export const LogIn = ({setToken}) => {
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(backendUrl + "/api/user/login", {
-        email,
-        password,
-      });
+      let res;
+      try {
+        res = await axios.post(`${backendUrl}/api/user/login`, { email, password });
+      } catch {
+        // If admin/faculty fails, try student login
+        res = await axios.post(`${backendUrl}/api/student/login`, { email, password });
+      }
 
       if (res.status === 200) {
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
         setToken(res.data.token);
-        navigate("/dashboard");
+        if (res.data.user.role === "Admin") {
+          navigate("/admin");
+        } else if (res.data.user.role === "Faculty") {
+          navigate("/faculty");
+        } else {
+          navigate("/student");         
+        }
       } else {
         toast.success(res.data.message);
       }
@@ -56,7 +65,7 @@ export const LogIn = ({setToken}) => {
     <>
       <div className="flex items-center justify-center h-screen bg-gray-100 text-sm md:text-lg">
         <div className="p-8 bg-white md:w-[500px] md:h-[400px] rounded-2xl shadow-2xl">
-          <h1 className="text-center font-bold text-base md:text-2xl mb-4 text-purple-900">Attendance Management System</h1>
+          <h1 className="text-center font-bold text-base md:text-2xl mb-4 text-purple-900">College Management App</h1>
           <h1 className="text-center font-bold text-base md:text-2xl">Login</h1>
           <form onSubmit={
             onSubmitHandler
