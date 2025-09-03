@@ -13,7 +13,8 @@ import announcementRoutes from "./routes/announcementRoute.js";
 import timetableRoutes from "./routes/timetableRoute.js";
 import resultRoutes from "./routes/resultRoute.js";
 import studymaterialRoutes from "./routes/studymaterialRoute.js";
-import courseRoutes from "./routes/courseRoute.js"
+import courseRoutes from "./routes/courseRoute.js";
+import collegeRoutes from "./routes/collegeRegisterRoute.js";
 import { fileURLToPath } from "url";
 
 const app = express();
@@ -28,8 +29,9 @@ app.use("/api/subject", subjectRoutes);
 app.use("/api/announcements", announcementRoutes);
 app.use("/api/timetable", timetableRoutes);
 app.use("/api/result", resultRoutes);
-app.use("/api/studyMaterial", studymaterialRoutes)
-app.use("/api/course", courseRoutes )
+app.use("/api/studyMaterial", studymaterialRoutes);
+app.use("/api/course", courseRoutes);
+app.use("/api/college", collegeRoutes);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

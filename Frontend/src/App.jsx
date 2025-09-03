@@ -29,6 +29,9 @@ import StudentAnnouncement from "./pages/StudentAnnouncement";
 import StudentTimetable from "./pages/StudentTimetable";
 import StudentResult from "./pages/StudentResult";
 import StudentStudymaterials from "./pages/StudentStudymaterials";
+import Home from "./pages/Home";
+import Home2 from "./pages/Home2";
+import CollegeRegister from "./pages/CollegeRegister";
 
 const ProtectedRoute = ({ element, role }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -61,7 +64,10 @@ function App() {
 
       <Routes>
         {/* Login Route (No header/sidebar) */}
+        <Route path="/Home" element={<Home />} />
+        <Route path="/Home2" element={<Home2 />} />
         <Route path="/login" element={<LogIn setToken={setToken} />} />
+        <Route path="/collegeRegister" element={<CollegeRegister setToken={setToken} />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* Protected Routes inside Layout */}
         <Route element={<Layout />}>

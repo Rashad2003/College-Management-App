@@ -69,13 +69,13 @@ const FacultyResult = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-50 to-sky-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-50 to-yellow-100 p-6">
       <div
         className="max-w-4xl mx-auto"
       >
         {/* Header */}
-        <h1 className="text-3xl mt-15 font-bold text-sky-800 flex items-center gap-2 mb-8">
-          <FaPercentage className="text-sky-600" /> Student Results
+        <h1 className="text-3xl font-bold text-yellow-800 flex items-center gap-2 mb-8">
+          <FaPercentage className="text-yellow-600" /> Student Results
         </h1>
 
         {/* Upload Result Form (Faculty Only) */}
@@ -84,9 +84,9 @@ const FacultyResult = () => {
             onSubmit={handleUploadResult}
             className="bg-white p-6 rounded-2xl shadow-lg mb-8"
           >
-            <h2 className="text-xl font-semibold text-sky-800 mb-4">Upload New Result</h2>
+            <h2 className="text-xl font-semibold text-yellow-800 mb-4">Upload New Result</h2>
             <select
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-yellow-300 focus:border-yellow-500 focus:outline-none"
               value={selectedStudent}
               onChange={(e) => setSelectedStudent(e.target.value)}
             >
@@ -98,14 +98,14 @@ const FacultyResult = () => {
               ))}
             </select>
             <input
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-yellow-300 focus:border-yellow-500 focus:outline-none"
               type="text"
               placeholder="Semester"
               value={semester}
               onChange={(e) => setSemester(e.target.value)}
             />
             <input
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-yellow-300 focus:border-yellow-500 focus:outline-none"
               type="number"
               min="0"
               max="100"
@@ -115,7 +115,7 @@ const FacultyResult = () => {
             />
             <button
               type="submit"
-              className="w-full bg-sky-600 text-white py-3 rounded-lg hover:bg-sky-700 transition duration-300 flex items-center justify-center gap-2"
+              className="w-full bg-yellow-600 text-white py-3 rounded-lg hover:bg-yellow-700 transition duration-300 flex items-center justify-center gap-2"
               disabled={loading}
             >
               {loading ? "Uploading..." : "Upload Result"}
@@ -125,10 +125,10 @@ const FacultyResult = () => {
 
         {/* Results List */}
         <div className="bg-white p-6 rounded-2xl shadow-lg overflow-x-auto">
-          <h2 className="text-xl font-semibold text-sky-800 mb-4">Results</h2>
+          <h2 className="text-xl font-semibold text-yellow-800 mb-4">Results</h2>
           <table className="w-full">
             <thead>
-              <tr className="bg-sky-50">
+              <tr className="bg-yellow-50">
                 <th className="p-3 text-left">Student</th>
                 <th className="p-3 text-left">Semester</th>
                 <th className="p-3 text-left">Percentage</th>
@@ -144,7 +144,7 @@ const FacultyResult = () => {
                 </tr>
               ) : (
                 results.map((result) => (
-                  <tr key={result._id} className="border-b border-sky-100">
+                  <tr key={result._id} className="border-b border-yellow-100">
                     <td className="p-3">{result.student?.name || "N/A"}</td>
                     <td className="p-3">{result.semester}</td>
                     <td className="p-3">{result.percentage}%</td>

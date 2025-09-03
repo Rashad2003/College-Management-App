@@ -14,9 +14,11 @@ const FacultyStudymaterials = () => {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [expandedYears, setExpandedYears] = useState({});
+  const [course, setCourse] = useState([]);
 
   useEffect(() => {
     fetchMaterials();
+    fetchCourse();
   }, []);
 
   const fetchMaterials = async () => {
@@ -61,6 +63,19 @@ const FacultyStudymaterials = () => {
     }
   };
 
+  const fetchCourse = async () => {
+      try {
+        const res = await axios.get(backendUrl + "/api/course/get", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log(res);        
+        setCourse(res.data.courses)
+      } catch (error) {
+        console.error("Error fetching :", error);
+        console.error("Error fetching course:", error);
+      }
+    }
+
   // Group materials by year
   const groupedMaterials = materials.reduce((acc, material) => {
     if (!acc[material.year]) {
@@ -78,13 +93,13 @@ const FacultyStudymaterials = () => {
     }));
   };
   return (
-    <div className="min-h-screen mt-15 bg-gradient-to-br from-sky-50 to-sky-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 p-6">
     <div
       className="max-w-4xl mx-auto"
     >
       {/* Header */}
-      <h1 className="text-3xl font-bold text-sky-800 flex items-center gap-2 mb-8">
-        <FaBookOpen className="text-sky-600" /> Study Materials
+      <h1 className="text-3xl font-bold text-red-800 flex items-center gap-2 mb-8">
+        <FaBookOpen className="text-red-600" /> Study Materials
       </h1>
 
       {/* Upload Study Material Form (Faculty Only) */}
@@ -93,27 +108,28 @@ const FacultyStudymaterials = () => {
           onSubmit={handleUploadMaterial}
           className="bg-white p-6 rounded-2xl shadow-lg mb-8"
         >
-          <h2 className="text-xl font-semibold text-sky-800 mb-4">Upload New Study Material</h2>
+          <h2 className="text-xl font-semibold text-red-800 mb-4">Upload New Study Material</h2>
           <input
-            className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+            className="w-full p-3 mb-4 rounded-lg border border-red-300 focus:border-red-500 focus:outline-none"
             type="text"
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
           <select
-            className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+            className="w-full p-3 mb-4 rounded-lg border border-red-300 focus:border-red-500 focus:outline-none"
             value={department}
             onChange={(e) => setDepartment(e.target.value)}
           >
             <option value="All">All Departments</option>
-            <option value="IT">IT</option>
-            <option value="CSE">CSE</option>
-            <option value="ECE">ECE</option>
-            <option value="MECH">MECH</option>
+            {course.map((subj, index) => (
+    <option key={index} value={subj.courseName}>
+      {subj.courseName}
+    </option>
+  ))}
           </select>
           <select
-            className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+            className="w-full p-3 mb-4 rounded-lg border border-red-300 focus:border-red-500 focus:outline-none"
             value={year}
             onChange={(e) => setYear(e.target.value)}
           >
@@ -124,7 +140,7 @@ const FacultyStudymaterials = () => {
           </select>
           <div className="flex items-center gap-2 mb-4">
             <input
-              className="w-full p-3 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 rounded-lg border border-red-300 focus:border-red-500 focus:outline-none"
               type="file"
               accept="application/pdf"
               onChange={(e) => setFile(e.target.files[0])}
@@ -132,7 +148,7 @@ const FacultyStudymaterials = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-sky-600 text-white py-3 rounded-lg hover:bg-sky-700 transition duration-300 flex items-center justify-center gap-2"
+            className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition duration-300 flex items-center justify-center gap-2"
             disabled={loading}
           >
             <FaUpload /> {loading ? "Uploading..." : "Upload Study Material"}
@@ -155,15 +171,15 @@ const FacultyStudymaterials = () => {
                 className="flex items-center justify-between cursor-pointer"
                 onClick={() => toggleYear(year)}
               >
-                <h2 className="text-2xl font-bold text-sky-800 flex items-center gap-2">
+                <h2 className="text-2xl font-bold text-red-800 flex items-center gap-2">
                   {expandedYears[year] ? (
-                    <FaFolderOpen className="text-sky-600" />
+                    <FaFolderOpen className="text-red-600" />
                   ) : (
-                    <FaFolder className="text-sky-600" />
+                    <FaFolder className="text-red-600" />
                   )}
                   {year} Year
                 </h2>
-                <span className="text-sky-600">
+                <span className="text-red-600">
                   {expandedYears[year] ? "▼" : "▶"}
                 </span>
               </div>
@@ -172,8 +188,8 @@ const FacultyStudymaterials = () => {
               {expandedYears[year] && (
                 <div className="mt-4 space-y-4">
                   {groupedMaterials[year].map((material) => (
-                    <div key={material._id} className="bg-sky-50 p-4 rounded-lg">
-                      <h3 className="text-xl font-bold text-sky-800">{material.title}</h3>
+                    <div key={material._id} className="bg-red-50 p-4 rounded-lg">
+                      <h3 className="text-xl font-bold text-red-800">{material.title}</h3>
                       <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
                         <span>📅 {new Date(material.createdAt).toLocaleString()}</span>
                       </div>
@@ -181,7 +197,7 @@ const FacultyStudymaterials = () => {
                         href={`http://localhost:5000/${material.pdfFile}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-block mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition duration-300"
+                        className="inline-block mt-4 bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition duration-300"
                       >
                         View Study Material 📄
                       </a>

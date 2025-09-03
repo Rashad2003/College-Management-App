@@ -1,6 +1,7 @@
 import DateTime from './DateTime'
 import { MdLogout } from "react-icons/md";
 import {useNavigate } from "react-router-dom";
+import { PiStudent } from "react-icons/pi";
 
 const Header = () => {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ const Header = () => {
     <nav>
         <div className='grid grid-cols-[1fr] md:grid-cols-[1fr_5fr]'>
             <div className='bg-purple-700 w-full px-[16.5px]'>
+                <PiStudent className='text-[6rem] mx-auto text-white'/>
                 <p className='font-bold text-white text-center'>Attendance Management System</p>
             </div>
             <div>

@@ -1,4 +1,3 @@
-import React from 'react'
 import { Link } from "react-router-dom";
 import {
   FaBullhorn,
@@ -19,31 +18,31 @@ const Admin = () => {
     const cards = [
       {
         title: "Dashboard",
-        icon: <FaClipboardList className="w-8 h-8 text-sky-600" />,
+        icon: <FaClipboardList className="w-8 h-8 text-blue-600" />,
         link: "/dashboard",
-        bgColor: "bg-sky-50",
-        hoverColor: "hover:bg-sky-100",
+        bgColor: "bg-blue-50",
+        hoverColor: "hover:bg-blue-100",
       },
       {
         title: "Announcement",
-        icon: <FaBullhorn className="w-8 h-8 text-sky-600" />,
+        icon: <FaBullhorn className="w-8 h-8 text-gray-600" />,
         link: "/faculty/announcement",
-        bgColor: "bg-sky-50",
-        hoverColor: "hover:bg-sky-100",
+        bgColor: "bg-gray-50",
+        hoverColor: "hover:bg-gray-100",
       },
       {
         title: "Students",
-        icon: <FaUserGraduate className="w-8 h-8 text-sky-600" />,
+        icon: <FaUserGraduate className="w-8 h-8 text-pink-600" />,
         link: "/students",
-        bgColor: "bg-sky-50",
-        hoverColor: "hover:bg-sky-100",
+        bgColor: "bg-pink-50",
+        hoverColor: "hover:bg-pink-100",
       },
       {
         title: "Course",
-        icon: <FaUserGraduate className="w-8 h-8 text-sky-600" />,
+        icon: <FaUserGraduate className="w-8 h-8 text-orange-600" />,
         link: "/course",
-        bgColor: "bg-sky-50",
-        hoverColor: "hover:bg-sky-100",
+        bgColor: "bg-orange-50",
+        hoverColor: "hover:bg-orange-100",
       },
       {
         title: "Register",
@@ -82,10 +81,10 @@ const Admin = () => {
       },
       {
         title: "Report",
-        icon: <FaClipboardList className="w-8 h-8 text-purple-600" />,
+        icon: <FaClipboardList className="w-8 h-8 text-cyan-600" />,
         link: "/report",
-        bgColor: "bg-purple-50",
-        hoverColor: "hover:bg-purple-100",
+        bgColor: "bg-cyan-50",
+        hoverColor: "hover:bg-cyan-100",
       },
       
     ];
@@ -93,7 +92,7 @@ const Admin = () => {
     <>
     <div className="min-h-screen p-6">
         {/* Cards Grid */}
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
           {cards.map((card, index) => (
             <div
               key={index}

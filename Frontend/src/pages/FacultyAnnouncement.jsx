@@ -12,9 +12,11 @@ const FacultyAnnouncement = () => {
     const [message, setMessage] = useState("");
     const [department, setDepartment] = useState("All");
     const [loading, setLoading] = useState(false);
+    const [course, setCourse] = useState([]);
   
     useEffect(() => {
       fetchAnnouncements();
+      fetchCourse();
     }, []);
   
     const fetchAnnouncements = async () => {
@@ -27,6 +29,19 @@ const FacultyAnnouncement = () => {
         console.error("Error fetching announcements:", error);
       }
     };
+
+    const fetchCourse = async () => {
+      try {
+        const res = await axios.get(backendUrl + "/api/course/get", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log(res);        
+        setCourse(res.data.courses)
+      } catch (error) {
+        console.error("Error fetching :", error);
+        console.error("Error fetching course:", error);
+      }
+    }
   
     const handlePostAnnouncement = async (e) => {
       e.preventDefault();
@@ -39,7 +54,7 @@ const FacultyAnnouncement = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setTitle("");
-        setMessage("");
+        setMessage(""); 
         setDepartment("All");
         fetchAnnouncements();
       } catch (error) {
@@ -49,14 +64,14 @@ const FacultyAnnouncement = () => {
       }
     };
   return (
-    <div className="min-h-screen mt-15 bg-gradient-to-br from-sky-50 to-sky-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
       <div
         className="max-w-4xl mx-auto"
       >
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-sky-800 flex items-center gap-2">
-            <FaBullhorn className="text-sky-600" /> Announcements
+          <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
+            <FaBullhorn className="text-gray-600" /> Announcements
           </h1>
         </div>
 
@@ -66,34 +81,35 @@ const FacultyAnnouncement = () => {
             onSubmit={handlePostAnnouncement}
             className="bg-white p-6 rounded-2xl shadow-lg mb-8"
           >
-            <h2 className="text-xl font-semibold text-sky-800 mb-4">Post New Announcement</h2>
+            <h2 className="text-xl font-semibold text-gray-800 mb-4">Post New Announcement</h2>
             <input
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none"
               type="text"
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
             <textarea
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none"
               placeholder="Message"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
             />
             <select
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-gray-300 focus:border-gray-500 focus:outline-none"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
             >
               <option value="All">All Departments</option>
-              <option value="IT">IT</option>
-              <option value="CSE">CSE</option>
-              <option value="ECE">ECE</option>
-              <option value="MECH">MECH</option>
+              {course.map((subj, index) => (
+    <option key={index} value={subj.courseName}>
+      {subj.courseName}
+    </option>
+  ))}
             </select>
             <button
               type="submit"
-              className="w-full bg-sky-600 text-white py-3 rounded-lg hover:bg-sky-700 transition duration-300"
+              className="w-full bg-gray-600 text-white py-3 rounded-lg hover:bg-gray-700 transition duration-300"
               disabled={loading}
             >
               {loading ? "Posting..." : "Post Announcement"}

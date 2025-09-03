@@ -17,9 +17,11 @@ const FacultyTimetable = () => {
   const [expandedDepartments, setExpandedDepartments] = useState({}); // Track expanded/collapsed state for departments
   const [expandedYears, setExpandedYears] = useState({}); // Track expanded/collapsed state for years
   const [expandedSections, setExpandedSections] = useState({}); // Track expanded/collapsed state for sections
+  const [course, setCourse] = useState([]);
 
   useEffect(() => {
     fetchTimetables();
+    fetchCourse();
   }, []);
 
   const fetchTimetables = async () => {
@@ -33,6 +35,19 @@ const FacultyTimetable = () => {
       console.error("Error fetching timetables:", error);
     }
   };
+
+  const fetchCourse = async () => {
+      try {
+        const res = await axios.get(backendUrl + "/api/course/get", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        console.log(res);        
+        setCourse(res.data.courses)
+      } catch (error) {
+        console.error("Error fetching :", error);
+        console.error("Error fetching course:", error);
+      }
+    }
 
   const handleUploadTimetable = async (e) => {
     e.preventDefault();
@@ -112,40 +127,41 @@ const FacultyTimetable = () => {
   };
 
   return (
-    <div className="min-h-screen mt-15 bg-gradient-to-br from-sky-50 to-sky-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-green-50 to-green-100 p-6">
       <div
         className="max-w-4xl mx-auto"
       >
         {/* Header */}
-        <h1 className="text-3xl font-bold text-sky-800 flex items-center gap-2 mb-8">
-          <FaCalendarAlt className="text-sky-600" /> Exam Timetables
+        <h1 className="text-3xl font-bold text-green-800 flex items-center gap-2 mb-8">
+          <FaCalendarAlt className="text-green-600" /> Exam Timetables
         </h1>
 
           <form
             onSubmit={handleUploadTimetable}
             className="bg-white p-6 rounded-2xl shadow-lg mb-8"
           >
-            <h2 className="text-xl font-semibold text-sky-800 mb-4">Upload New Timetable</h2>
+            <h2 className="text-xl font-semibold text-green-800 mb-4">Upload New Timetable</h2>
             <input
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-green-300 focus:border-green-500 focus:outline-none"
               type="text"
               placeholder="Title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
             />
             <select
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-green-300 focus:border-green-500 focus:outline-none"
               value={department}
               onChange={(e) => setDepartment(e.target.value)}
             >
               <option value="All">All Departments</option>
-              <option value="IT">IT</option>
-              <option value="CSE">CSE</option>
-              <option value="ECE">ECE</option>
-              <option value="MECH">MECH</option>
+              {course.map((subj, index) => (
+    <option key={index} value={subj.courseName}>
+      {subj.courseName}
+    </option>
+  ))}
             </select>
             <select
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-green-300 focus:border-green-500 focus:outline-none"
               value={year}
               onChange={(e) => setYear(e.target.value)}
             >
@@ -155,7 +171,7 @@ const FacultyTimetable = () => {
               <option value="4">4th Year</option>
             </select>
             <select
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+              className="w-full p-3 mb-4 rounded-lg border border-green-300 focus:border-green-500 focus:outline-none"
               value={section}
               onChange={(e) => setSection(e.target.value)}
             >
@@ -163,17 +179,9 @@ const FacultyTimetable = () => {
               <option value="B">Section B</option>
               <option value="C">Section C</option>
             </select>
-            <select
-              className="w-full p-3 mb-4 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
-              value={examType}
-              onChange={(e) => setExamType(e.target.value)}
-            >
-              <option value="CAT1">CAT1</option>
-              <option value="CAT2">CAT2</option>
-            </select>
             <div className="flex items-center gap-2 mb-4">
               <input
-                className="w-full p-3 rounded-lg border border-sky-300 focus:border-sky-500 focus:outline-none"
+                className="w-full p-3 rounded-lg border border-green-300 focus:border-green-500 focus:outline-none"
                 type="file"
                 accept="application/pdf"
                 onChange={(e) => setFile(e.target.files[0])}
@@ -181,7 +189,7 @@ const FacultyTimetable = () => {
             </div>
             <button
               type="submit"
-              className="w-full bg-sky-600 text-white py-3 rounded-lg hover:bg-sky-700 transition duration-300 flex items-center justify-center gap-2"
+              className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center gap-2"
               disabled={loading}
             >
               <FaUpload /> {loading ? "Uploading..." : "Upload Timetable"}
@@ -203,15 +211,15 @@ const FacultyTimetable = () => {
                   className="flex items-center justify-between cursor-pointer"
                   onClick={() => toggleDepartment(department)}
                 >
-                  <h2 className="text-2xl font-bold text-sky-800 flex items-center gap-2">
+                  <h2 className="text-2xl font-bold text-green-800 flex items-center gap-2">
                     {expandedDepartments[department] ? (
-                      <FaFolderOpen className="text-sky-600" />
+                      <FaFolderOpen className="text-green-600" />
                     ) : (
-                      <FaFolder className="text-sky-600" />
+                      <FaFolder className="text-green-600" />
                     )}
                     {department} Department
                   </h2>
-                  <span className="text-sky-600">
+                  <span className="text-green-600">
                     {expandedDepartments[department] ? "▼" : "▶"}
                   </span>
                 </div>
@@ -222,22 +230,22 @@ const FacultyTimetable = () => {
                     {Object.keys(groupedTimetables[department]).map((year) => (
                       <div
                         key={year}
-                        className="bg-sky-50 p-4 rounded-lg"
+                        className="bg-green-50 p-4 rounded-lg"
                       >
                         {/* Year Folder Header */}
                         <div
                           className="flex items-center justify-between cursor-pointer"
                           onClick={() => toggleYear(department, year)}
                         >
-                          <h3 className="text-xl font-bold text-sky-800 flex items-center gap-2">
+                          <h3 className="text-xl font-bold text-green-800 flex items-center gap-2">
                             {expandedYears[`${department}-${year}`] ? (
-                              <FaFolderOpen className="text-sky-600" />
+                              <FaFolderOpen className="text-green-600" />
                             ) : (
-                              <FaFolder className="text-sky-600" />
+                              <FaFolder className="text-green-600" />
                             )}
                             {year} Year
                           </h3>
-                          <span className="text-sky-600">
+                          <span className="text-green-600">
                             {expandedYears[`${department}-${year}`] ? "▼" : "▶"}
                           </span>
                         </div>
@@ -248,22 +256,22 @@ const FacultyTimetable = () => {
                             {Object.keys(groupedTimetables[department][year]).map((section) => (
                               <div
                                 key={section}
-                                className="bg-sky-100 p-4 rounded-lg"
+                                className="bg-green-100 p-4 rounded-lg"
                               >
                                 {/* Section Folder Header */}
                                 <div
                                   className="flex items-center justify-between cursor-pointer"
                                   onClick={() => toggleSection(department, year, section)}
                                 >
-                                  <h4 className="text-lg font-bold text-sky-800 flex items-center gap-2">
+                                  <h4 className="text-lg font-bold text-green-800 flex items-center gap-2">
                                     {expandedSections[`${department}-${year}-${section}`] ? (
-                                      <FaFolderOpen className="text-sky-600" />
+                                      <FaFolderOpen className="text-green-600" />
                                     ) : (
-                                      <FaFolder className="text-sky-600" />
+                                      <FaFolder className="text-green-600" />
                                     )}
                                     Section {section}
                                   </h4>
-                                  <span className="text-sky-600">
+                                  <span className="text-green-600">
                                     {expandedSections[`${department}-${year}-${section}`] ? "▼" : "▶"}
                                   </span>
                                 </div>
@@ -274,13 +282,13 @@ const FacultyTimetable = () => {
                                     {Object.keys(groupedTimetables[department][year][section]).map((examType) => (
                                       <div
                                         key={examType}
-                                        className="bg-sky-200 p-4 rounded-lg"
+                                        className="bg-green-200 p-4 rounded-lg"
                                       >
-                                        <h5 className="text-md font-bold text-sky-800">{examType}</h5>
+                                        <h5 className="text-md font-bold text-green-800">{examType}</h5>
                                         <div className="mt-2 space-y-2">
                                           {groupedTimetables[department][year][section][examType].map((timetable) => (
                                             <div key={timetable._id} className="bg-white p-4 rounded-lg">
-                                              <h6 className="text-sm font-bold text-sky-800">{timetable.title}</h6>
+                                              <h6 className="text-sm font-bold text-green-800">{timetable.title}</h6>
                                               <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
                                                 <span>📅 {new Date(timetable.createdAt).toLocaleString()}</span>
                                               </div>
@@ -288,7 +296,7 @@ const FacultyTimetable = () => {
                                                 href={`http://localhost:5000/${timetable.pdfFile}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="inline-block mt-4 bg-sky-600 text-white px-4 py-2 rounded-lg hover:bg-sky-700 transition duration-300"
+                                                className="inline-block mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-300"
                                               >
                                                 View Timetable 📄
                                               </a>
