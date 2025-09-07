@@ -32,14 +32,15 @@ import StudentStudymaterials from "./pages/StudentStudymaterials";
 import Home from "./pages/Home";
 import Home2 from "./pages/Home2";
 import CollegeRegister from "./pages/CollegeRegister";
+import AdminRegister from "./pages/AdminRegister";
+import SwitchPage from "./pages/SwitchPage";
 
-const ProtectedRoute = ({ element, role }) => {
+const ProtectedRoute = ({ element }) => {
   const user = JSON.parse(localStorage.getItem("user"));
+  const college = JSON.parse(localStorage.getItem("college"));
   const token = localStorage.getItem("token");
 
-  if (!token || !user) return <Navigate to="/login" replace />;
-  if (role && user.role !== role) return <Navigate to="/login" replace />;
-
+  if (!token || !user || !college ) return <Navigate to="/switchPage" replace />;
   return element;
 };
 
@@ -68,6 +69,8 @@ function App() {
         <Route path="/Home2" element={<Home2 />} />
         <Route path="/login" element={<LogIn setToken={setToken} />} />
         <Route path="/collegeRegister" element={<CollegeRegister setToken={setToken} />} />
+        <Route path="/register-admin" element={<AdminRegister setToken={setToken} />} />
+        <Route path="/switchPage" element={<SwitchPage />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         {/* Protected Routes inside Layout */}
         <Route element={<Layout />}>
@@ -119,7 +122,7 @@ function App() {
         </Route>
 
         {/* Redirect unknown routes */}
-        <Route path="*" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/switchPage" replace />} />
       </Routes>
     </Router>
   );

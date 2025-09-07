@@ -4,6 +4,6 @@ import { collegeRegister, getCollege } from "../controllers/collegeRegisterContr
 const router = express.Router();
 
 router.post("/add", collegeRegister);
-router.post("/get", getCollege);
+router.get("/get/:code", getCollege);
 
 export default router;

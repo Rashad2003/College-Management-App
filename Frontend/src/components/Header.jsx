@@ -8,7 +8,8 @@ const Header = () => {
     const logout = () =>{
         localStorage.removeItem("token");
         localStorage.removeItem("user");
-        navigate("/login");
+        localStorage.removeItem("college");
+        navigate("/switchPage");
     }
     const user = JSON.parse(localStorage.getItem("user"));
   return (

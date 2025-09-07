@@ -1,6 +1,23 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
 
 const Home2 = () => {
+  const [collegeCode, setCollegeCode] = useState("");
+  const [college, setCollege] = useState(null);
+
+  const handleSearch = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}/api/college/${collegeCode}`);
+      if (res.data.success) {
+        setCollege(res.data.college);
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || "College not found");
+      setCollege(null);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
       {/* Header */}
@@ -19,14 +36,25 @@ const Home2 = () => {
         <h3 className="text-4xl sm:text-5xl font-bold mb-4">
           Enter Your College Code
         </h3>
-        <input type="text" className="p-4 w-[50%] h-10 mt-4 border border-gray-500 bg-white text-black rounded-2xl" />
+        <input 
+        type="text" 
+        value={collegeCode}
+        onChange={(e) => setCollegeCode(e.target.value)}
+        className="p-4 w-[50%] h-10 mt-4 border border-gray-500 bg-white text-black rounded-2xl" 
+        />
         <div className="flex gap-4">
           <Link to="/login">
-            <button className="mt-4 px-6 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-200">
+            <button onClick={handleSearch} className="mt-4 px-6 py-3 bg-white text-indigo-600 rounded-lg font-semibold hover:bg-gray-200">
               Search
             </button>
           </Link>
         </div>
+        {college && (
+          <div className="mt-4 text-center">
+            <p className="font-semibold">✅ College Found:</p>
+            <p className="text-lg text-blue-600">{college.collegeName}</p>
+          </div>
+        )}
         <div className="mt-4">
           <Link to="/collegeRegister">
           <p>New User?</p>
